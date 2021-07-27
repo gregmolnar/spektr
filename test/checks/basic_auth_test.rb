@@ -13,8 +13,8 @@ class BasicAuthTest < Minitest::Test
     CODE
 
     ast = Parser::CurrentRuby.parse(code)
-    controller = RailsScan::Controller.new("ApplicationController", ast)
-    check = RailsScan::Checks::BasicAuth.new(controller)
+    controller = Spektr::Controller.new("ApplicationController", ast)
+    check = Spektr::Checks::BasicAuth.new(controller)
     assert_equal false, check.run
   end
 end

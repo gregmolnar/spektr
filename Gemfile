@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in rails_scan.gemspec
+# Specify your gem's dependencies in spektr.gemspec
 gemspec
 
 gem "rake", "~> 12.0"

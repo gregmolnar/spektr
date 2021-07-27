@@ -1,4 +1,4 @@
-module RailsScan
+module Spektr
   module Processors
     class ClassProcessor < Base
       include AST::Processor::Mixin

@@ -1,4 +1,4 @@
-module RailsScan
+module Spektr
   class Controller
     attr_accessor :name, :options, :ast
 

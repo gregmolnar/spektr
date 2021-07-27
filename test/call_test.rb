@@ -1,5 +1,5 @@
 require "test_helper"
-describe RailsScan::Call do
+describe Spektr::Call do
   describe "with options" do
     before do
       code = <<-CODE
@@ -7,7 +7,7 @@ describe RailsScan::Call do
       CODE
 
       ast = Parser::CurrentRuby.parse(code)
-      @call = RailsScan::Call.new(ast)
+      @call = Spektr::Call.new(ast)
     end
 
     it "sets name" do
@@ -27,7 +27,7 @@ describe RailsScan::Call do
       CODE
 
       ast = Parser::CurrentRuby.parse(code)
-      @call = RailsScan::Call.new(ast)
+      @call = Spektr::Call.new(ast)
     end
 
     it "has no options" do

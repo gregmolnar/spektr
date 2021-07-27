@@ -1,5 +1,5 @@
 require 'ast'
-module RailsScan::Processors
+module Spektr::Processors
   class Base
     include AST::Processor::Mixin
 

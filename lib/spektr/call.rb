@@ -1,4 +1,4 @@
-module RailsScan
+module Spektr
   class Call
     attr_accessor :name, :options
 

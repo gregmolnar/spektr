@@ -1,8 +1,8 @@
-require_relative 'lib/rails_scan/version'
+require_relative 'lib/spektr/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "rails_scan"
-  spec.version       = RailsScan::VERSION
+  spec.name          = "spektr"
+  spec.version       = Spektr::VERSION
   spec.authors       = ["Greg Molnar"]
   spec.email         = ["molnargerg@gmail.com"]
 

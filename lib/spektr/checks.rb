@@ -1,4 +1,4 @@
-module RailsScan
+module Spektr
   class Checks
 
     def self.load

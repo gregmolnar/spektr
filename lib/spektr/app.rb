@@ -1,4 +1,4 @@
-module RailsScan
+module Spektr
   class App
     attr_accessor :root, :controllers, :checks
 

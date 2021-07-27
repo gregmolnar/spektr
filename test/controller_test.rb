@@ -8,7 +8,7 @@ class ControllerTest < Minitest::Test
       end
     CODE
 
-    @controller = RailsScan::Controller.new(code)
+    @controller = Spektr::Controller.new(code)
 
   end
 
