@@ -12,8 +12,14 @@ require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.collapse("#{__dir__}/processors")
 loader.setup # ready!
+loader.eager_load
 
 module RailsScan
   class Error < StandardError; end
-  # Your code goes here...
+
+  def run
+    @app = App.new
+    @app.load
+    @checks = Checks.load
+  end
 end

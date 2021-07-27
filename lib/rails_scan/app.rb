@@ -1,9 +1,10 @@
 module RailsScan
   class App
-    attr_accessor :root, :controllers
+    attr_accessor :root, :controllers, :checks
 
-    def initialize
+    def initialize(checks)
       @root = "./"
+      @checks = checks
     end
 
     def load
