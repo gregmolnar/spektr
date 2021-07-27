@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "ruby_parser", "~>3.13"
   spec.add_dependency "parser", "~> 3.0.0"
   spec.add_dependency "unparser", "~> 0.6.0"
+  spec.add_dependency "pastel"
 
 
   spec.add_development_dependency "byebug"

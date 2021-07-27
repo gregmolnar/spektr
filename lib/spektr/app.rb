@@ -2,8 +2,8 @@ module Spektr
   class App
     attr_accessor :root, :controllers, :checks
 
-    def initialize(checks)
-      @root = "./"
+    def initialize(checks:, root: "./")
+      @root = root
       @checks = checks
     end
 
@@ -11,6 +11,11 @@ module Spektr
       @controllers = controller_paths.map do |path|
         Controller.new(File.read(path))
       end
+      puts "#{@controllers.size} controllers loaded\n"
+    end
+
+    def scan
+
     end
 
     def controller_paths

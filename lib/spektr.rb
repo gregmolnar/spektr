@@ -17,9 +17,10 @@ loader.eager_load
 module Spektr
   class Error < StandardError; end
 
-  def run
-    @app = App.new
+  def self.run
+    checks = Checks.load
+    root = ARGV[0].nil? ? "./" : ARGV[0]
+    @app = App.new(checks: checks, root: root)
     @app.load
-    @checks = Checks.load
   end
 end

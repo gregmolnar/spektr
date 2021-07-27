@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+#Adjust path in case called directly and not through gem
+$:.unshift "#{File.expand_path(File.dirname(__FILE__))}/../lib"
+
+require 'spektr'
+
+Spektr.run
