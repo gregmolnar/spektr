@@ -4,10 +4,7 @@ require "ruby_parser"
 require "parser"
 require "parser/current"
 require "unparser"
-
-# require "spektr/processors/base_processor"
-
-# require "spektr/controller"
+require "erb"
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
