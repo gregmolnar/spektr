@@ -9,7 +9,6 @@ class ControllerTest < Minitest::Test
     CODE
 
     @controller = Spektr::Targets::Controller.new("application_controller.rb", code)
-
   end
 
   def test_it_sets_name

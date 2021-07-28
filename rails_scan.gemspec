@@ -36,4 +36,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "byebug"
   spec.add_development_dependency "activesupport"
+  spec.add_development_dependency "guard"
+  spec.add_development_dependency "guard-minitest"
 end
