@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :controllers, :checks
+    attr_accessor :root, :checks, :controllers, :models, :lib_files
 
     def initialize(checks:, root: "./")
       @root = root
@@ -8,10 +8,24 @@ module Spektr
     end
 
     def load
+      loaded_files = []
       @controllers = controller_paths.map do |path|
-        Controller.new(File.read(path))
+        Targets::Controller.new(path, File.read(path))
+        loaded_files << path
       end
       puts "#{@controllers.size} controllers loaded\n"
+
+      @models = model_paths.map do |path|
+        Targets::Base.new(path, File.read(path))
+        loaded_files << path
+      end
+      puts "#{@models.size} models loaded\n"
+
+      @lib_files = find_files("app/**/").map do |path|
+        next if loaded_files.include?(path)
+        Targets::Base.new(path, File.read(path))
+      end
+      puts "#{@lib_files.size} libs loaded\n"
     end
 
     def scan

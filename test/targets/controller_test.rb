@@ -8,7 +8,7 @@ class ControllerTest < Minitest::Test
       end
     CODE
 
-    @controller = Spektr::Controller.new(code)
+    @controller = Spektr::Targets::Controller.new(code)
 
   end
 
