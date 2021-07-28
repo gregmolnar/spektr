@@ -8,7 +8,7 @@ class ControllerTest < Minitest::Test
       end
     CODE
 
-    @controller = Spektr::Targets::Controller.new(code)
+    @controller = Spektr::Targets::Controller.new("application_controller.rb", code)
 
   end
 
