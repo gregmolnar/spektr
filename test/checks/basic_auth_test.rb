@@ -11,7 +11,7 @@ class BasicAuthTest < Minitest::Test
         http_basic_authenticate_with name: "dhh", password: "secret", except: :index
       end
     CODE
-    app = Spektr::App.new(checks: Spektr::Checks.load)
+    app = Spektr::App.new(checks: [Spektr::Checks::BasicAuth])
     controller = Spektr::Targets::Controller.new("application_controller.rb", code)
     check = Spektr::Checks::BasicAuth.new(app, controller)
     check.run

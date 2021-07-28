@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :lib_files, :warnings
+    attr_accessor :root, :checks, :controllers, :models, :lib_files, :warnings, :rails_version
 
     def initialize(checks:, root: "./")
       @root = root
@@ -62,7 +62,7 @@ module Spektr
     end
 
     def rails_version
-      @rails_version ||= gem_specs.find{ |spec| spec.name == "rails" }.version
+      @rails_version ||= gem_specs.find{ |spec| spec.name == "rails" }&.version
     end
   end
 end
