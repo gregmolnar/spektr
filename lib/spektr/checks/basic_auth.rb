@@ -1,22 +1,17 @@
 module Spektr
-  class Checks::BasicAuth
-
-    def initialize(controller)
-      @controller = controller
-    end
-
-    def run
-      if check_filter
-        return true
-      else
-        return false
+  class Checks
+    class BasicAuth < Base
+      def run
+        check_filter
       end
-    end
 
-    def check_filter
-      calls = @controller.find_calls(:http_basic_authenticate_with)
-      calls.each do |call|
-        return false if call.options[:password] && call.options[:password].type == :str
+      def check_filter
+        calls = @target.find_calls(:http_basic_authenticate_with)
+        calls.each do |call|
+          if call.options[:password] && call.options[:password].type == :str
+            warn! @target, self, call.location, "PBasic authentication password stored in source code"
+          end
+        end
       end
     end
   end

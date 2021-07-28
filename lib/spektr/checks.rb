@@ -6,8 +6,5 @@ module Spektr
         Checks.const_get(c)if Checks.const_get(c).is_a?(Class)
       end
     end
-
-    def warn(target, check, line_number)
-    end
   end
 end

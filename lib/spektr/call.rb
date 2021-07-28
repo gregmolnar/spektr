@@ -1,9 +1,10 @@
 module Spektr
   class Call
-    attr_accessor :name, :options
+    attr_accessor :name, :options, :location
 
     def initialize(ast)
       @name = ast.children[1]
+      @location = ast.location
       @options = {}
       ast.children[2..].each do |option|
         if option.type == :hash

@@ -1,24 +1,25 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :lib_files
+    attr_accessor :root, :checks, :controllers, :models, :lib_files, :warnings
 
     def initialize(checks:, root: "./")
       @root = root
       @checks = checks
+      @warnings = []
     end
 
     def load
       puts "Rails version: #{rails_version}"
       loaded_files = []
       @controllers = controller_paths.map do |path|
-        Targets::Controller.new(path, File.read(path))
         loaded_files << path
+        Targets::Controller.new(path, File.read(path))
       end
       puts "#{@controllers.size} controllers loaded\n"
 
       @models = model_paths.map do |path|
-        Targets::Base.new(path, File.read(path))
         loaded_files << path
+        Targets::Base.new(path, File.read(path))
       end
       puts "#{@models.size} models loaded\n"
 
@@ -27,10 +28,17 @@ module Spektr
         Targets::Base.new(path, File.read(path))
       end
       puts "#{@lib_files.size} libs loaded\n"
+
+      puts "Scanning...."
+      scan!
     end
 
-    def scan
-
+    def scan!
+      @checks.each do |check|
+        @controllers.each do |controller|
+          check.new(self, controller).run
+        end
+      end
     end
 
     def controller_paths
