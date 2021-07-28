@@ -23,6 +23,12 @@ module Spektr
       end
       puts "#{@models.size} models loaded\n"
 
+      @views = view_paths.map do |path|
+        loaded_files << path
+        Targets::Base.new(path, File.read(path))
+      end
+      puts "#{@views.size} views loaded\n"
+
       @lib_files = find_files("app/**/").map do |path|
         next if loaded_files.include?(path)
         Targets::Base.new(path, File.read(path))
@@ -50,7 +56,7 @@ module Spektr
     end
 
     def view_paths
-      @view_paths ||= find_files("app/**/views")
+      @view_paths ||= find_files("app/**/views", %w[html.erb html.haml rhtml js.erb html.slim].join(","))
     end
 
     def find_files(pattern, extensions = ".rb")
