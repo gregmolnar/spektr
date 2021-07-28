@@ -8,6 +8,7 @@ module Spektr
     end
 
     def load
+      puts "Rails version: #{rails_version}"
       loaded_files = []
       @controllers = controller_paths.map do |path|
         Targets::Controller.new(path, File.read(path))
@@ -46,6 +47,14 @@ module Spektr
 
     def find_files(pattern, extensions = ".rb")
       Dir.glob(File.join(@root, pattern, "**", "*#{extensions}"))
+    end
+
+    def gem_specs
+      @gem_specs ||= Bundler::LockfileParser.new(Bundler.read_file("#{@root}/Gemfile.lock")).specs
+    end
+
+    def rails_version
+      @rails_version ||= gem_specs.find{ |spec| spec.name == "rails" }.version
     end
   end
 end

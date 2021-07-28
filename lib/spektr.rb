@@ -1,8 +1,9 @@
 require "spektr/version"
+require "bundler"
 require "ruby_parser"
 require "parser"
-require 'parser/current'
-require 'unparser'
+require "parser/current"
+require "unparser"
 
 # require "spektr/processors/base_processor"
 
