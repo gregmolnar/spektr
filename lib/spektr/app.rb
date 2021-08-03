@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :lib_files, :warnings, :rails_version
+    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :warnings, :rails_version
 
     def initialize(checks:, root: "./")
       @root = root
@@ -25,7 +25,7 @@ module Spektr
 
       @views = view_paths.map do |path|
         loaded_files << path
-        Targets::Base.new(path, File.read(path))
+        Targets::View.new(path, File.read(path))
       end
       puts "#{@views.size} views loaded\n"
 
@@ -44,6 +44,9 @@ module Spektr
         @controllers.each do |controller|
           check.new(self, controller).run
         end
+        @views.each do |view|
+          check.new(self, view).run
+        end
       end
     end
 
@@ -56,11 +59,11 @@ module Spektr
     end
 
     def view_paths
-      @view_paths ||= find_files("app/**/views", %w[html.erb html.haml rhtml js.erb html.slim].join(","))
+      @view_paths ||= find_files("app", "{#{%w[html.erb html.haml rhtml js.erb html.slim].join(",")}}")
     end
 
-    def find_files(pattern, extensions = ".rb")
-      Dir.glob(File.join(@root, pattern, "**", "*#{extensions}"))
+    def find_files(path, extensions = "rb")
+      Dir.glob(File.join(@root, path, "**", "*.#{extensions}"))
     end
 
     def gem_specs
