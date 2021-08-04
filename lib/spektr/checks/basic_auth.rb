@@ -9,7 +9,7 @@ module Spektr
         calls = @target.find_calls(:http_basic_authenticate_with)
         calls.each do |call|
           if call.options[:password] && call.options[:password].type == :str
-            warn! @target, self, call.location, "PBasic authentication password stored in source code"
+            warn! @target, self, call.location, "Basic authentication password stored in source code"
           end
         end
       end
