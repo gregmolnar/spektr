@@ -1,13 +1,12 @@
 require "test_helper"
-describe Spektr::Call do
+describe Spektr::Exp::Call do
   describe "with options" do
     before do
       code = <<-CODE
         http_basic_authenticate_with name: "dhh", password: "secret", except: :index
       CODE
-
       ast = Parser::CurrentRuby.parse(code)
-      @call = Spektr::Call.new(ast)
+      @call = Spektr::Exp::Call.new(ast)
     end
 
     it "sets name" do
@@ -27,12 +26,11 @@ describe Spektr::Call do
       CODE
 
       ast = Parser::CurrentRuby.parse(code)
-      @call = Spektr::Call.new(ast)
+      @call = Spektr::Exp::Call.new(ast)
     end
 
     it "has no options" do
       assert_empty @call.options
     end
   end
-
 end
