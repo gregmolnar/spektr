@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ControllerTest < Minitest::Test
+class BaseTest < Minitest::Test
   def setup
     code = <<-CODE
       class ApplicationController
@@ -17,21 +17,20 @@ class ControllerTest < Minitest::Test
           end
       end
     CODE
-
-    @controller = Spektr::Targets::Controller.new("application_controller.rb", code)
-  end
-
-  def test_it_sets_name
-    assert_equal "ApplicationController", @controller.name
+    @target = Spektr::Targets::Base.new("application_controller.rb", code)
   end
 
   def test_it_finds_call
-    calls = @controller.find_calls :http_basic_authenticate_with
+    calls = @target.find_calls :http_basic_authenticate_with
     refute_empty calls
     assert_equal 1, calls.size
   end
 
-  def test_it_registers_methods
-    assert_equal 2, @controller.actions.size
+  def test_it_finds_methods
+    assert_equal 3, @target.find_methods(ast: @target.ast).size
+  end
+
+  def test_it_finds_public_methods
+    assert_equal 2, @target.find_methods(ast: @target.ast, type: :public).size
   end
 end
