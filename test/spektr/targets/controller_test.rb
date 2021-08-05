@@ -12,6 +12,10 @@ class ControllerTest < Minitest::Test
         def show
         end
 
+        def update
+          render :edit
+        end
+
         private
           def authenticate!
           end
@@ -31,7 +35,7 @@ class ControllerTest < Minitest::Test
     assert_equal 1, calls.size
   end
 
-  def test_it_registers_methods
-    assert_equal 2, @controller.actions.size
+  def test_it_registers_actions
+    assert_equal 3, @controller.actions.size
   end
 end

@@ -8,11 +8,19 @@ module Spektr
         @name = ast.children.first
         @arguments = []
         @body = []
-        @ast.children[1].children.each do |argument|
-          @arguments << argument.children.first
-        end
-        @ast.children[2]&.children&.each do |ast|
+        process @ast.children
+      end
+
+      def process(ast)
+        ast&.each do |ast|
+          next unless Parser::AST::Node === ast
           case ast.type
+          when :args
+            ast.children.each do |argument|
+              @arguments << argument.children.first
+            end
+          when :begin
+            process(ast.children)
           when :lvasgn
             @body << Lvasign.new(ast)
           when :send

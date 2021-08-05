@@ -5,6 +5,7 @@ require "parser"
 require "parser/current"
 require "unparser"
 require "erb"
+require "active_support/core_ext/string/inflections"
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem

@@ -9,6 +9,10 @@ module Spektr
         @options = {}
         @arguments = {}
       end
+
+      def call?
+        is_a? Call
+      end
     end
   end
 end

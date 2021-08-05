@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     spektr (0.1.0)
+      activesupport
       better_html
       parser (~> 3.0.0)
       pastel
