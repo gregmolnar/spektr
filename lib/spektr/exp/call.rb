@@ -11,9 +11,17 @@ module Spektr
               @options[pair.children[0].children[0]] = pair.children[1]
             end
           else
-            @arguments[child.children.last] = child.type
+            @arguments << Argument.new(child)
           end
         end
+      end
+    end
+
+    class Argument
+      attr_accessor :name, :type
+      def initialize(ast)
+        @name = ast.children.last
+        @type = ast.type
       end
     end
   end

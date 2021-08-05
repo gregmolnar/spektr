@@ -7,7 +7,7 @@ module Spektr
         @ast = ast
         @location = ast.location
         @options = {}
-        @arguments = {}
+        @arguments = []
       end
 
       def call?

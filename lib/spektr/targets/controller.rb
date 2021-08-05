@@ -22,11 +22,11 @@ module Spektr
           @body.each do |exp|
             if exp.call?
               if exp.name == :render
-                if exp.arguments.first[1] == :sym
-                  @template = File.join(controller.name.delete_suffix("Controller").underscore, exp.arguments.first[0].to_s)
+                if exp.arguments.first.type == :sym
+                  @template = File.join(controller.name.delete_suffix("Controller").underscore, exp.arguments.first.name.to_s)
                 elsif
-                  if exp.arguments.first[1] == :str
-                    @template = exp.arguments.first[0]
+                  if exp.arguments.first.type == :str
+                    @template = exp.arguments.first.name
                   end
                 end
               end
