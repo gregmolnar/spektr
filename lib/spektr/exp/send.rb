@@ -1,8 +1,11 @@
 module Spektr
   module Exp
     class Send < Base
+      attr_accessor :receiver
+
       def initialize(ast)
         super
+        @receiver = ast.children[0]
         @name = ast.children[1]
         ast.children[2..].each do |child|
           case child.type
