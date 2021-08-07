@@ -1,6 +1,6 @@
 module Spektr
   module Exp
-    class Call < Base
+    class Send < Base
       def initialize(ast)
         super
         @name = ast.children[1]
