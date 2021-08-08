@@ -1,30 +1,29 @@
 module Spektr
   module Exp
     class Definition < Base
-      attr_accessor :ast, :name, :arguments, :body, :location, :private, :protected
+      attr_accessor :private, :protected
 
       def initialize(ast)
         super
-        @name = ast.children.first
-        @arguments = []
-        @body = []
         process @ast.children
       end
 
       def process(ast)
-        ast&.each do |ast|
-          next unless Parser::AST::Node === ast
-          case ast.type
+        ast&.each do |node|
+          next unless Parser::AST::Node === node
+          case node.type
           when :args
-            ast.children.each do |argument|
+            node.children.each do |argument|
               @arguments << argument.children.first
             end
           when :begin
-            process(ast.children)
+            process(node.children)
           when :lvasgn
-            @body << Lvasign.new(ast)
+            @body << Lvasign.new(node)
+          when :ivasgn
+            @body << Ivasign.new(node)
           when :send
-            @body << Call.new(ast)
+            @body << Send.new(node)
           end
         end
       end
