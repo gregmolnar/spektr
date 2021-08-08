@@ -34,12 +34,10 @@ module Spektr
         Targets::Base.new(path, File.read(path))
       end
       puts "#{@lib_files.size} libs loaded\n"
-
-      puts "Scanning...."
-      scan!
     end
 
     def scan!
+      puts "Scanning...."
       @checks.each do |check|
         @controllers.each do |controller|
           check.new(self, controller).run
