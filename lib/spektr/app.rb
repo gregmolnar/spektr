@@ -69,7 +69,7 @@ module Spektr
     end
 
     def rails_version
-      @rails_version ||= gem_specs.find{ |spec| spec.name == "rails" }&.version
+      @rails_version ||= Gem::Version.new(gem_specs.find{ |spec| spec.name == "rails" }&.version)
     end
   end
 end

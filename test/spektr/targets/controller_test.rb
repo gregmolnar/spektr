@@ -37,5 +37,7 @@ class ControllerTest < Minitest::Test
 
   def test_it_registers_actions
     assert_equal 3, @controller.actions.size
+    assert_empty @controller.actions.first.body
+    refute_empty @controller.actions[2].body
   end
 end

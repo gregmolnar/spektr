@@ -20,7 +20,7 @@ module Spektr
           super(ast)
           @template = File.join(controller.name.delete_suffix("Controller").underscore, name.to_s)
           @body.each do |exp|
-            if exp.call?
+            if exp.send?
               if exp.name == :render
                 if exp.arguments.first.type == :sym
                   @template = File.join(controller.name.delete_suffix("Controller").underscore, exp.arguments.first.name.to_s)

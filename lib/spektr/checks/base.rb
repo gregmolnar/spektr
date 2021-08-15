@@ -24,5 +24,32 @@ module Spektr
 
     def version_affected
     end
+
+    def user_input?(type, name)
+      case type
+      when :ivar, :lvar
+        actions = []
+        @app.controllers.each do |controller|
+          actions = actions.concat controller.actions.select{ |action|
+            action.template == @target.view_path
+          }
+        end
+        actions.each do |action|
+          action.body.each do |exp|
+            if exp.is_a?(Exp::Ivasign) && exp.name == name
+              return exp.user_input?
+            end
+          end
+        end
+      when :sym
+        # do nothing
+      else
+        raise "Unknown argument type #{type}"
+      end
+    end
+
+    def app_version_between?(a, b)
+      @app.rails_version >= Gem::Version.new(a) && @app.rails_version <= Gem::Version.new(b)
+    end
   end
 end

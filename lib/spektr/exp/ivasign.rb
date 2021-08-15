@@ -1,6 +1,6 @@
 module Spektr
   module Exp
-    class Lvasign < Base
+    class Ivasign < Base
       include Spektr::Exp::Assignment
     end
   end

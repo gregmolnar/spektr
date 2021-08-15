@@ -11,7 +11,7 @@ module Spektr
       end
 
       def find_calls(name)
-        find(:send, name, @ast).map{ |ast| Exp::Call.new(ast) }
+        find(:send, name, @ast).map{ |ast| Exp::Send.new(ast) }
       end
 
       def find(type, name, ast, result = [])

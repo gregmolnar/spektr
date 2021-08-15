@@ -23,8 +23,21 @@ describe Spektr::Exp::Send do
     end
 
     it "has options" do
-      hash = { name: Parser::AST::Node.new(:str, ["dhh"]), password: Parser::AST::Node.new(:str, ["secret"]), except: Parser::AST::Node.new(:sym, [:index]) }
-      assert_equal hash, @send.options
+      refute @send.options.nil?
+      assert_equal :sym, @send.options[:name].key.type
+      assert_equal :str, @send.options[:name].value.type
+      assert_equal :sym, @send.options[:except].key.type
+      assert_equal :sym, @send.options[:except].value.type
+    end
+
+    it "handles ivar in options key" do
+      code = <<-CODE
+        content_tag "test", @class => "hello"
+      CODE
+      ast = Parser::CurrentRuby.parse(code)
+      _send = Spektr::Exp::Send.new(ast)
+      assert_equal :ivar, _send.options[:@class].key.type
+      assert_equal :str, _send.options[:@class].value.type
     end
   end
 

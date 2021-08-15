@@ -11,7 +11,7 @@ module Spektr
           case child.type
           when :hash
             child.children.each do |pair|
-              @options[pair.children[0].children[0]] = pair.children[1]
+              @options[pair.children[0].children[0]] = Option.new(pair)
             end
           else
             @arguments << Argument.new(child)
@@ -25,6 +25,16 @@ module Spektr
       def initialize(ast)
         @name = ast.children.last
         @type = ast.type
+      end
+    end
+
+    class Option
+      attr_accessor :name, :key, :value, :type
+      def initialize(ast)
+        @name = ast.children.first.children.last
+        @key = ast.children.first
+        @value = ast.children.last
+        @type = ast.children.last.type
       end
     end
   end
