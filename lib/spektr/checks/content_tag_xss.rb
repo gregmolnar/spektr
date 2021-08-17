@@ -1,6 +1,20 @@
 module Spektr
   class Checks
     class ContentTagXss < Base
+      # Checks for unescaped values in `content_tag`
+      #
+      #    content_tag :tag, body
+      #                       ^-- Unescaped in Rails 2.x
+      #
+      #    content_tag, :tag, body, attribute => value
+      #                                ^-- Unescaped in all versions
+      # TODO:
+      #    content_tag, :tag, body, attribute => value
+      #                                            ^
+      #                                            |
+      #            Escaped by default, can be explicitly escaped
+      #            or not by passing in (true|false) as fourth argument
+
       def run
         calls = @target.find_calls(:content_tag)
         # https://groups.google.com/d/msg/ruby-security-ann/8B2iV2tPRSE/JkjCJkSoCgAJ

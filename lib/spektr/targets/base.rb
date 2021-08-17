@@ -5,8 +5,9 @@ module Spektr
 
       def initialize(path, content)
         @ast = Parser::CurrentRuby.parse(content)
-        @name = @ast.children.first.children.last.to_s
         @path = path
+        return unless @ast
+        @name = @ast.children.first.children.last.to_s
         @current_method_type = :public
       end
 
@@ -16,6 +17,7 @@ module Spektr
 
       def find(type, name, ast, result = [])
         return result unless Parser::AST::Node === ast
+        puts "#{ast.type} #{ast.children[1]}"
         if ast.type == type && ast.children[1] == name
             result << ast
         elsif ast.children.any?

@@ -11,6 +11,13 @@ module Spektr
     def load
       puts "Rails version: #{rails_version}"
       loaded_files = []
+
+      @initializers = initializer_paths.map do |path|
+        loaded_files << path
+        Targets::Base.new(path, File.read(path))
+      end
+      puts "#{@initializers.size} initializers loaded\n"
+
       @controllers = controller_paths.map do |path|
         loaded_files << path
         Targets::Controller.new(path, File.read(path))
@@ -46,6 +53,10 @@ module Spektr
           check.new(self, view).run
         end
       end
+    end
+
+    def initializer_paths
+      @initializer_paths ||= find_files("config/initializers")
     end
 
     def controller_paths
