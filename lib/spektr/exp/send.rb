@@ -35,8 +35,14 @@ module Spektr
     class Argument
       attr_accessor :name, :type
       def initialize(ast)
-        @name = ast.children.last
-        @type = ast.type
+        case ast.children.first.type
+        when :send
+          @name = ast.children.first.children.last
+          @type = :send
+        else
+          @name = ast.children.last
+          @type = ast.type
+        end
       end
     end
 

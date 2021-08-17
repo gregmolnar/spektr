@@ -39,6 +39,16 @@ describe Spektr::Exp::Send do
       assert_equal :ivar, _send.options[:@class].key.type
       assert_equal :str, _send.options[:@class].value.type
     end
+
+    it "handles params argument" do
+      code = <<-CODE
+        create_with(params[:blog_post])
+      CODE
+      ast = Parser::CurrentRuby.parse(code)
+      _send = Spektr::Exp::Send.new(ast)
+      assert_equal :send, _send.arguments.first.type
+      assert_equal :params, _send.arguments.first.name
+    end
   end
 
   describe "with no options" do
