@@ -33,16 +33,18 @@ module Spektr
     end
 
     class Argument
-      attr_accessor :name, :type
+      attr_accessor :name, :type, :ast
       def initialize(ast)
-        case ast.children.first.type
-        when :send
-          @name = ast.children.first.children.last
-          @type = :send
+        @ast = ast
+        argument = if ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first
+          ast.children.first.children.first
+        elsif ast.children.first.is_a?(Parser::AST::Node)
+          ast.children.first
         else
-          @name = ast.children.last
-          @type = ast.type
+          ast
         end
+        @name = argument.children.last
+        @type = argument.type
       end
     end
 

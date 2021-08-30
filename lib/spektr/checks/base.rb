@@ -41,6 +41,8 @@ module Spektr
             end
           end
         end
+      when :send
+        return true if [:params, :cookies, :request].include? name
       when :sym
         # do nothing
       else

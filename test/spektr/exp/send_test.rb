@@ -49,6 +49,16 @@ describe Spektr::Exp::Send do
       assert_equal :send, _send.arguments.first.type
       assert_equal :params, _send.arguments.first.name
     end
+
+    it "handles chained argument" do
+      code = <<-CODE
+        create_with(params[:blog_post].permit(:title))
+      CODE
+      ast = Parser::CurrentRuby.parse(code)
+      _send = Spektr::Exp::Send.new(ast)
+      assert_equal :send, _send.arguments.first.type
+      assert_equal :params, _send.arguments.first.name
+    end
   end
 
   describe "with no options" do
