@@ -20,7 +20,7 @@ module Spektr
         if ast.type == type && ast.children[1] == name
             result << ast
         elsif ast.children.any?
-          ast.children.map do |child|
+          ast.children.each do |child|
             result = find(type, name, child, result)
           end
         end
