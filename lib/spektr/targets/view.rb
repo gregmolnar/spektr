@@ -1,3 +1,4 @@
+require 'action_view'
 module Spektr
   module Targets
     class View < Base
@@ -9,7 +10,6 @@ module Spektr
         if match_data = path.match(/views\/(.+?)\./)
           @view_path = match_data[1]
         end
-
         @ast = Parser::CurrentRuby.parse(source(content))
         @name = @ast.children.first.children.last.to_s
       end
@@ -18,7 +18,7 @@ module Spektr
         type = @path.match(TEMPLATE_EXTENSIONS)[1].to_sym
         case type
         when :erb, :rhtml
-          ERB.new(content, nil, '-').src
+          ActionView::Template::Handlers::ERB::Erubi.new(content, trim_mode: '-').src
         end
       end
     end

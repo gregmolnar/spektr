@@ -19,6 +19,7 @@ module Spektr
     end
 
     def warn!(target, check, location, message)
+      return if @app.warnings.find{ |w| w.target.path == target.path && w.location.line == location.line && w.message == message }
       @app.warnings << Warning.new(target, check, location, message)
     end
 
@@ -47,6 +48,35 @@ module Spektr
         # do nothing
       else
         raise "Unknown argument type #{type}"
+      end
+    end
+
+    def model_attribute?(item)
+      model_names = @app.models.collect(&:name)
+      case item.type
+      when :ivar, :lvar
+        actions = []
+        @app.controllers.each do |controller|
+          actions = actions.concat controller.actions.select{ |action|
+            action.template == @target.view_path
+          }
+        end
+        actions.each do |action|
+          action.body.each do |exp|
+            if exp.is_a?(Exp::Ivasign) && exp.name == item.name
+              return exp.user_input?
+            end
+          end
+        end
+      when :send
+        _send = Exp::Send.new(item.ast)
+        return true if _send.receiver && model_names.include?(_send.receiver.name)
+      when :const
+        return true if model_names.include? item.name
+      when :sym
+        # do nothing
+      else
+        raise "Unknown argument type #{item.type}"
       end
     end
 

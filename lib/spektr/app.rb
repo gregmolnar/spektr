@@ -39,7 +39,7 @@ module Spektr
       @lib_files = find_files("app/**/").map do |path|
         next if loaded_files.include?(path)
         Targets::Base.new(path, File.read(path))
-      end
+      end.reject(&:nil?)
       puts "#{@lib_files.size} libs loaded\n"
     end
 

@@ -5,10 +5,7 @@ module Spektr
 
       def initialize(ast)
         super
-        @receiver = ast.children[0]
-        if @receiver && @receiver.type == :send
-          @receiver = expand_receiver(@receiver)
-        end
+        @receiver = Receiver.new(ast.children[0]) if ast.children[0]
         @name = ast.children[1]
         ast.children[2..].each do |child|
           case child.type
@@ -21,30 +18,24 @@ module Spektr
           end
         end
       end
-
-      def expand_receiver(ast, tree = [])
-        if ast && ast.children.any?
-          tree << ast.children.last
-          expand_receiver(ast.children.first, tree)
-        else
-          tree.reverse.join(".")
-        end
-      end
     end
 
     class Argument
       attr_accessor :name, :type, :ast
       def initialize(ast)
+        if ast.type == :begin
+          ast = ast.children.first
+        end
         @ast = ast
-        argument = if ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first
+        argument = if ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
           ast.children.first.children.first
         elsif ast.children.first.is_a?(Parser::AST::Node)
           ast.children.first
         else
           ast
         end
-        @name = argument.children.last
         @type = argument.type
+        @name = argument.children.last
       end
     end
 
@@ -55,6 +46,25 @@ module Spektr
         @key = ast.children.first
         @value = ast.children.last
         @type = ast.children.last.type
+      end
+    end
+
+    class Receiver
+      attr_accessor :name, :type, :ast, :expanded
+      def initialize(ast)
+        @expanded = expand!(ast)
+        (ast.type == :send && ast.children[0].is_a?(Parser::AST::Node)) ? @ast = ast.children[0] : @ast = ast
+        @type = @ast.type
+        @name = @ast.children.last
+      end
+
+      def expand!(ast, tree = [])
+        if ast.is_a?(Parser::AST::Node) && ast.children.any?
+          tree << ast.children.last
+          expand!(ast.children.first, tree)
+        else
+          tree.reverse.join(".")
+        end
       end
     end
   end

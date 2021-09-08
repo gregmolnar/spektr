@@ -1,6 +1,5 @@
 require "spektr/version"
 require "bundler"
-require "ruby_parser"
 require "parser"
 require "parser/current"
 require "unparser"

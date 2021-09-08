@@ -13,13 +13,15 @@ describe Spektr::Exp::Send do
       assert_equal :http_basic_authenticate_with, @send.name
     end
 
-    it "sets receiver" do
+    it "sets no receiver" do
       assert_nil @send.receiver
     end
 
     it "sets receiver" do
       _send = Spektr::Exp::Send.new(Parser::CurrentRuby.parse('"foobar".upcase'))
-      assert_equal '(str "foobar")', _send.receiver.to_s
+      assert _send.receiver.is_a?(Spektr::Exp::Receiver)
+      assert_equal "foobar", _send.receiver.name
+      assert_equal :str, _send.receiver.type
     end
 
     it "has options" do
