@@ -9,7 +9,11 @@ module Spektr
     end
 
     def full_message
-      "#{message} at line #{@location.line} of #{@target.path}"
+      if @location
+        "#{message} at line #{@location.line} of #{@target.path}"
+      else
+        "#{message}"
+      end
     end
   end
 end

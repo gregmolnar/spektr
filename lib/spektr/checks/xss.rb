@@ -2,6 +2,7 @@ module Spektr
   class Checks
     class Xss < Base
       # TODO: tests for haml, xml, js
+      # TODO: add check for raw calls
       def run
         calls = @target.find_calls(:safe_expr_append=)
         calls.each do |call|

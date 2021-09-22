@@ -19,7 +19,7 @@ module Spektr
     end
 
     def warn!(target, check, location, message)
-      return if @app.warnings.find{ |w| w.target.path == target.path && w.location.line == location.line && w.message == message }
+      return if @app.warnings.find{ |w| w.target.path == target.path && w.location&.line == location&.line && w.message == message }
       @app.warnings << Warning.new(target, check, location, message)
     end
 

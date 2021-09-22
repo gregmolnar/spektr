@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :warnings, :rails_version
+    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version
 
     def initialize(checks:, root: "./")
       @root = root
@@ -36,6 +36,12 @@ module Spektr
       end
       puts "#{@views.size} views loaded\n"
 
+      @routes = [File.join(@root, "config", "routes.rb")].map do |path|
+        loaded_files << path
+        Targets::Routes.new(path, File.read(path))
+      end
+      puts "#{@routes.size} routes loaded\n"
+
       @lib_files = find_files("app/**/").map do |path|
         next if loaded_files.include?(path)
         Targets::Base.new(path, File.read(path))
@@ -48,10 +54,16 @@ module Spektr
       @checks.each do |check|
         @controllers.each do |controller|
           check.new(self, controller).run
-        end
+        end if @controllers
         @views.each do |view|
           check.new(self, view).run
-        end
+        end if @views
+        @models.each do |view|
+          check.new(self, view).run
+        end if @models
+        @routes.each do |view|
+          check.new(self, view).run
+        end if @routes
       end
     end
 
