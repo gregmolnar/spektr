@@ -11,8 +11,12 @@ module Spektr
         @current_method_type = :public
       end
 
-      def find_calls(name)
-        find(:send, name, @ast).map{ |ast| Exp::Send.new(ast) }
+      def find_calls(name, receiver = nil)
+        calls = find(:send, name, @ast).map{ |ast| Exp::Send.new(ast) }
+        if receiver
+          calls.select!{ |call| call.receiver.expanded == receiver }
+        end
+        calls
       end
 
       def find(type, name, ast, result = [])

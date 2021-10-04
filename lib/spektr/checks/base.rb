@@ -44,7 +44,7 @@ module Spektr
         end
       when :send
         return true if [:params, :cookies, :request].include? name
-      when :sym
+      when :sym, :str
         # do nothing
       else
         raise "Unknown argument type #{type}"
