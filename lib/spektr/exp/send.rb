@@ -40,11 +40,12 @@ module Spektr
     end
 
     class Option
-      attr_accessor :name, :key, :value, :type
+      attr_accessor :name, :key, :value, :type, :value_type
       def initialize(ast)
         @name = ast.children.first.children.last
         @key = ast.children.first
-        @value = ast.children.last
+        @value = ast.children.last.children.last
+        @value_type = ast.children.last.type
         @type = ast.children.last.type
       end
     end

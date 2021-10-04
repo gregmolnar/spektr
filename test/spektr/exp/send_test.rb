@@ -27,9 +27,9 @@ describe Spektr::Exp::Send do
     it "has options" do
       refute @send.options.nil?
       assert_equal :sym, @send.options[:name].key.type
-      assert_equal :str, @send.options[:name].value.type
+      assert_equal :str, @send.options[:name].value_type
       assert_equal :sym, @send.options[:except].key.type
-      assert_equal :sym, @send.options[:except].value.type
+      assert_equal :sym, @send.options[:except].value_type
     end
 
     it "handles ivar in options key" do
@@ -39,7 +39,7 @@ describe Spektr::Exp::Send do
       ast = Parser::CurrentRuby.parse(code)
       _send = Spektr::Exp::Send.new(ast)
       assert_equal :ivar, _send.options[:@class].key.type
-      assert_equal :str, _send.options[:@class].value.type
+      assert_equal :str, _send.options[:@class].value_type
     end
 
     it "handles params argument" do
