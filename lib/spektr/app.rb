@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version
+    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version, :production_config
 
     def initialize(checks:, root: "./")
       @root = root
@@ -11,6 +11,9 @@ module Spektr
     def load
       puts "Rails version: #{rails_version}"
       loaded_files = []
+
+      config_path = File.join(@root, "config", "environments", "production.rb")
+      @production_config = Targets::Base.new(config_path, File.read(config_path))
 
       @initializers = initializer_paths.map do |path|
         loaded_files << path
@@ -64,6 +67,7 @@ module Spektr
         @routes.each do |view|
           check.new(self, view).run
         end if @routes
+        check.new(self, @production_config).run
       end
     end
 

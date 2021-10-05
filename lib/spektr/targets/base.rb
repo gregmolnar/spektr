@@ -19,9 +19,19 @@ module Spektr
         calls
       end
 
+      def find_method(name)
+        find(:def, name, @ast).last
+      end
+
       def find(type, name, ast, result = [])
-        return result unless Parser::AST::Node === ast
-        if ast.type == type && ast.children[1] == name
+        return result unless ast.is_a? Parser::AST::Node
+        case type
+        when :def
+          name_index = 0
+        else
+          name_index = 1
+        end
+        if ast.type == type && ast.children[name_index] == name
             result << ast
         elsif ast.children.any?
           ast.children.each do |child|
