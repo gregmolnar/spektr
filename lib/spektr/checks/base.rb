@@ -19,8 +19,9 @@ module Spektr
     end
 
     def warn!(target, check, location, message)
-      return if @app.warnings.find{ |w| w.target.path == target.path && w.location&.line == location&.line && w.message == message }
-      @app.warnings << Warning.new(target, check, location, message)
+      path = target.is_a?(String) ? target : target.path
+      return if @app.warnings.find{ |w| w.path == path && w.location&.line == location&.line && w.message == message }
+      @app.warnings << Warning.new(path, check, location, message)
     end
 
     def version_affected

@@ -41,7 +41,6 @@ module Spektr
         result
       end
 
-
       def find_methods(ast:, result: [], type: :all)
         return result unless Parser::AST::Node === ast
         if ast.type == :send && [:private, :public, :protected].include?(ast.children.last)

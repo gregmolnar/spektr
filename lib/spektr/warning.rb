@@ -1,8 +1,8 @@
 module Spektr
   class Warning
-    attr_accessor :target, :check, :location, :message
-    def initialize(target, check, location, message)
-      @target = target
+    attr_accessor :path, :check, :location, :message
+    def initialize(path, check, location, message)
+      @path = path
       @check = check
       @location = location
       @message = message
@@ -10,7 +10,7 @@ module Spektr
 
     def full_message
       if @location
-        "#{message} at line #{@location.line} of #{@target.path}"
+        "#{message} at line #{@location.line} of #{@path}"
       else
         "#{message}"
       end
