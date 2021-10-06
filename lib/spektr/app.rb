@@ -95,6 +95,10 @@ module Spektr
       @gem_specs ||= Bundler::LockfileParser.new(Bundler.read_file("#{@root}/Gemfile.lock")).specs
     end
 
+    def has_gem?(name)
+      gem_specs.any?{ |spec| spec.name == name }
+    end
+
     def rails_version
       @rails_version ||= Gem::Version.new(gem_specs.find{ |spec| spec.name == "rails" }&.version)
     end

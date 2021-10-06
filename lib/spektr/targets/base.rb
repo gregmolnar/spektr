@@ -31,7 +31,7 @@ module Spektr
         else
           name_index = 1
         end
-        if ast.type == type && ast.children[name_index] == name
+        if node_matches?(ast.type, ast.children[name_index], type, name)
             result << ast
         elsif ast.children.any?
           ast.children.each do |child|
@@ -39,6 +39,17 @@ module Spektr
           end
         end
         result
+      end
+
+      def node_matches?(node_type, node_name, type, name)
+        if node_type == type
+          if name.is_a? Regexp
+            return node_name =~ name
+          else
+            return node_name == name
+          end
+        end
+        false
       end
 
       def find_methods(ast:, result: [], type: :all)
