@@ -27,7 +27,7 @@ module Spektr
     def version_affected
     end
 
-    def user_input?(type, name)
+    def user_input?(type, name, ast = nil)
       case type
       when :ivar, :lvar
         actions = []
@@ -45,6 +45,10 @@ module Spektr
         end
       when :send
         return true if [:params, :cookies, :request].include? name
+      when :xstr, :begin
+        ast.children.each do |child|
+          return true if user_input?(child.type, child.children.last, child)
+        end
       when :sym, :str
         # do nothing
       else

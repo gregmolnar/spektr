@@ -27,7 +27,9 @@ module Spektr
           ast = ast.children.first
         end
         @ast = ast
-        argument = if ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
+        argument = if ast.type == :xstr
+          ast
+        elsif ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
           ast.children.first.children.first
         elsif ast.children.first.is_a?(Parser::AST::Node)
           ast.children.first
