@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version, :production_config
+    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version, :production_config, :gem_specs
 
     def initialize(checks:, root: "./")
       @root = root
