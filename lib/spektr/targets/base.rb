@@ -23,6 +23,10 @@ module Spektr
         find(:def, name, @ast).last
       end
 
+      def find_xstr
+        find(:xstr, nil, @ast).map{ |ast| Exp::Xstr.new(ast) }
+      end
+
       def find(type, name, ast, result = [])
         return result unless ast.is_a? Parser::AST::Node
         case type
@@ -45,6 +49,8 @@ module Spektr
         if node_type == type
           if name.is_a? Regexp
             return node_name =~ name
+          elsif name.nil?
+            return true
           else
             return node_name == name
           end

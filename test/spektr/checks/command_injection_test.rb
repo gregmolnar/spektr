@@ -1,19 +1,18 @@
 require "test_helper"
 
-class EvaluationTest < Minitest::Test
+class CommandInjectionTest < Minitest::Test
   def setup
     @code = <<-CODE
       class ApplicationController
         def index
-          eval("whoami")
-          eval(`ls \#{params[:directory]}`)
-          instance_eval params[:code]
+          `ls \#{params[:directory]}`
+          Kernel.open(params[:directory])
         end
       end
     CODE
-    @app = Spektr::App.new(checks: [Spektr::Checks::Evaluation])
+    @app = Spektr::App.new(checks: [Spektr::Checks::CommandInjection])
     @controller = Spektr::Targets::Controller.new("application_controller.rb", @code)
-    @check = Spektr::Checks::Evaluation.new(@app, @controller)
+    @check = Spektr::Checks::CommandInjection.new(@app, @controller)
   end
 
   def test_it_fails_with_user_supplied_value
