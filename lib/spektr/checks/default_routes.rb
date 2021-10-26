@@ -8,19 +8,17 @@ module Spektr
 
       def check_for_default_routes
         if app_version_between?(3, 4)
-          calls = []
-          %w{ match get post put delete }.each do |method|
-            calls.concat(@target.find_calls(method.to_sym))
+          calls = %w{ match get post put delete }.inject([]) do |memo, method|
+            memo.concat @target.find_calls(method.to_sym)
+            memo
           end
-          if calls.any?
-            calls.each do |call|
-              if call.arguments.first.name == ":controller(/:action(/:id(.:format)))" or (call.arguments.first.name.include?(":controller") &&  (call.arguments.first.name.include?(":action") or call.arguments.first.name.include?("*action")) )
-                warn! @target, self, call.location, "All public methods in controllers are available as actions"
-              end
+          calls.each do |call|
+            if call.arguments.first.name == ":controller(/:action(/:id(.:format)))" or (call.arguments.first.name.include?(":controller") &&  (call.arguments.first.name.include?(":action") or call.arguments.first.name.include?("*action")) )
+              warn! @target, self, call.location, "All public methods in controllers are available as actions"
+            end
 
-              if call.arguments.first.name.include?(":action") or call.arguments.first.name.include?("*action")
-                warn! @target, self, call.location, "All public methods in controllers are available as actions"
-              end
+            if call.arguments.first.name.include?(":action") or call.arguments.first.name.include?("*action")
+              warn! @target, self, call.location, "All public methods in controllers are available as actions"
             end
           end
         end

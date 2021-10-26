@@ -17,12 +17,11 @@ module Spektr
       end
 
       def check_calls_for_user_input(calls)
+        # TODO: might need to exclude tempfile and ActiveStorage::Filename
         calls.each do |call|
-          call.arguments.each do |argument|
-            # TODO: this might yield a lot of false positives
-            if user_input?(argument.type, argument.name, argument.ast)
-              warn! @target, self, call.location, "Command injection"
-            end
+          file_name = call.arguments.first
+          if user_input?(file_name.type, file_name.name, file_name.ast)
+            warn! @target, self, call.location, "Command injection"
           end
         end
       end
