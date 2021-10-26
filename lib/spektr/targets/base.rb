@@ -1,7 +1,7 @@
 module Spektr
   module Targets
     class Base
-      attr_accessor :path, :name, :options, :ast
+      attr_accessor :path, :name, :options, :ast, :parent
 
       def initialize(path, content)
         @ast = Parser::CurrentRuby.parse(content)
@@ -9,6 +9,9 @@ module Spektr
         return unless @ast
         @name = @ast.children.first.children.last.to_s
         @current_method_type = :public
+        if @ast.children[1] && @ast.children[1].is_a?(Parser::AST::Node)
+          @parent = @ast.children[1]&.children&.last&.to_s
+        end
       end
 
       def find_calls(name, receiver = nil)
