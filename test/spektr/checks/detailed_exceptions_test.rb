@@ -9,7 +9,7 @@ class DetailedExceptionsTest < Minitest::Test
      end
     CODE
     app = Spektr::App.new(checks: [Spektr::Checks::DetailedExceptions])
-    config = Spektr::Targets::Controller.new("production.rb", code)
+    config = Spektr::Targets::Base.new("production.rb", code)
     check = Spektr::Checks::DetailedExceptions.new(app, config)
     check.run
     assert_equal 1, app.warnings.size
