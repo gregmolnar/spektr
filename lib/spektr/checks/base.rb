@@ -86,7 +86,12 @@ module Spektr
     end
 
     def app_version_between?(a, b)
-      @app.rails_version >= Gem::Version.new(a) && @app.rails_version <= Gem::Version.new(b)
+      version_between?(a, b, @app.rails_version)
+    end
+
+    def version_between?(a, b, version)
+      version = Gem::Version.new(version) unless version.is_a? Gem::Version
+      version >= Gem::Version.new(a) && version <= Gem::Version.new(b)
     end
   end
 end
