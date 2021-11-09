@@ -22,6 +22,15 @@ module Spektr
         calls
       end
 
+      def find_calls_with_block(name, receiver = nil)
+        blocks = find(:block, nil, @ast)
+        calls = blocks.inject([]) do |memo, block|
+          memo.concat find_calls(name)
+          memo
+        end
+        calls
+      end
+
       def find_method(name)
         find(:def, name, @ast).last
       end
