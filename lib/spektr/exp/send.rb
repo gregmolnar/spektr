@@ -7,11 +7,16 @@ module Spektr
         super
         @receiver = Receiver.new(ast.children[0]) if ast.children[0]
         @name = ast.children[1]
-        ast.children[2..].each do |child|
+        children = ast.children[2..]
+        children.each do |child|
           case child.type
           when :hash
-            child.children.each do |pair|
-              @options[pair.children[0].children[0]] = Option.new(pair)
+            if children.size == 1 || children.last == child
+              child.children.each do |pair|
+                @options[pair.children[0].children[0]] = Option.new(pair)
+              end
+            else
+              @arguments << Argument.new(child)
             end
           else
             @arguments << Argument.new(child)
@@ -27,7 +32,7 @@ module Spektr
           ast = ast.children.first
         end
         @ast = ast
-        argument = if ast.type == :xstr
+        argument = if [:xstr, :hash].include? ast.type
           ast
         elsif ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
           ast.children.first.children.first
