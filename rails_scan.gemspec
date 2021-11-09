@@ -33,11 +33,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency "unparser", "~> 0.6.0"
   spec.add_dependency "pastel"
   spec.add_dependency "better_html"
-  spec.add_dependency "activesupport"
+  spec.add_dependency "erubi"
 
 
   spec.add_development_dependency "byebug"
-  spec.add_development_dependency "activesupport"
   spec.add_development_dependency "guard"
   spec.add_development_dependency "guard-minitest"
 end
