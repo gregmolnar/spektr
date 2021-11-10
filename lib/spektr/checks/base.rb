@@ -8,7 +8,7 @@ module Spektr
     end
 
     def run
-      return target_affected? || should_run?
+      return target_affected? && should_run?
     end
 
     def target_affected?
@@ -25,8 +25,16 @@ module Spektr
 
     def warn!(target, check, location, message)
       path = target.is_a?(String) ? target : target.path
-      return if @app.warnings.find{ |w| w.path == path && w.location&.line == location&.line && w.message == message }
+      return if dupe?(path, location, message)
       @app.warnings << Warning.new(path, check, location, message)
+    end
+
+    def dupe?(path, location, message)
+      @app.warnings.find do |w|
+        w.path == path &&
+        (w.location.nil? || w.location&.line == location&.line) &&
+        w.message == message
+      end
     end
 
     def version_affected

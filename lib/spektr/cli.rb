@@ -1,4 +1,5 @@
 require 'tty/option'
+require 'json'
 module Spektr
   class Cli
     include TTY::Option
@@ -29,7 +30,11 @@ module Spektr
         print help
         exit
       else
-        puts Spektr.run(params[:root], params[:output_format])
+        report = Spektr.run(params[:root], params[:output_format])
+        case params[:output_format]
+        when "json"
+          puts JSON.pretty_generate report
+        end
       end
     end
   end

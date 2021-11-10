@@ -15,7 +15,7 @@ module Spektr
         calls.each do |call|
           call.arguments.each do |argument|
             if user_input?(argument.type, argument.name)
-              warn! @target, self, call.location, "Cross-Site Scripting: Unescaped #{argument.name}"
+              warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
             end
             if model_attribute?(argument)
               warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute #{argument.name}"

@@ -8,6 +8,8 @@ module Spektr
       end
 
       def run
+        # disable this
+        return false
         return unless super
         cve_2020_8186_check
       end
