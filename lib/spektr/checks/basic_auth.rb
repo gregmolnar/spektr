@@ -1,7 +1,15 @@
 module Spektr
   class Checks
     class BasicAuth < Base
+
+      def initialize(app, target)
+        super
+        @name = "Basic Authentication"
+        @targets = ["Spektr::Targets::Controller"]
+      end
+
       def run
+        return unless super
         check_filter
       end
 

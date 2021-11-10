@@ -1,7 +1,14 @@
 module Spektr
   class Checks
     class CommandInjection < Base
+      def initialize(app, target)
+        super
+        @name = "Command Injection"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
+      end
+
       def run
+        return unless super
         # backticks
         check_calls_for_user_input(@target.find_xstr)
 
@@ -21,7 +28,7 @@ module Spektr
         calls.each do |call|
           file_name = call.arguments.first
           if user_input?(file_name.type, file_name.name, file_name.ast)
-            warn! @target, self, call.location, "Command injection"
+            warn! @target, self, call.location, "Command injection in #{call.name}"
           end
         end
       end

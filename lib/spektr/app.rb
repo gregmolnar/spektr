@@ -6,10 +6,13 @@ module Spektr
       @root = root
       @checks = checks
       @warnings = []
+      @json_output = {
+        app: {},
+        advisories: []
+      }
     end
 
     def load
-      puts "Rails version: #{rails_version}"
       loaded_files = []
 
       config_path = File.join(@root, "config", "environments", "production.rb")
@@ -19,41 +22,31 @@ module Spektr
         loaded_files << path
         Targets::Base.new(path, File.read(path))
       end
-      puts "#{@initializers.size} initializers loaded\n"
-
       @controllers = controller_paths.map do |path|
         loaded_files << path
         Targets::Controller.new(path, File.read(path))
       end
-      puts "#{@controllers.size} controllers loaded\n"
-
       @models = model_paths.map do |path|
         loaded_files << path
         Targets::Base.new(path, File.read(path))
       end
-      puts "#{@models.size} models loaded\n"
-
       @views = view_paths.map do |path|
         loaded_files << path
         Targets::View.new(path, File.read(path))
       end
-      puts "#{@views.size} views loaded\n"
-
       @routes = [File.join(@root, "config", "routes.rb")].map do |path|
         loaded_files << path
         Targets::Routes.new(path, File.read(path))
       end
-      puts "#{@routes.size} routes loaded\n"
-
+      # todo load non-app lib too
       @lib_files = find_files("app/**/").map do |path|
         next if loaded_files.include?(path)
         Targets::Base.new(path, File.read(path))
       end.reject(&:nil?)
-      puts "#{@lib_files.size} libs loaded\n"
+      self
     end
 
     def scan!
-      puts "Scanning...."
       @checks.each do |check|
         @controllers.each do |controller|
           check.new(self, controller).run
@@ -68,6 +61,32 @@ module Spektr
           check.new(self, view).run
         end if @routes
         check.new(self, @production_config).run
+      end
+      self
+    end
+
+    def report(format = "terminal")
+      @json_output[:app][:rails_version] = @rails_version
+      @json_output[:app][:initializers] = @initializers.size
+      @json_output[:app][:controllers] = @controllers.size
+      @json_output[:app][:models] = @models.size
+      @json_output[:app][:views] = @views.size
+      @json_output[:app][:routes] = @routes.size
+      @json_output[:app][:lib_files] = @lib_files.size
+
+      @warnings.each do |warning|
+        @json_output[:advisories] << {
+          name: warning.check.name,
+          description: warning.message,
+          path: warning.path,
+          location: warning.location
+        }
+      end
+      case format
+      when "json"
+        @json_output
+      when "terminal"
+        "Hold my beer"
       end
     end
 

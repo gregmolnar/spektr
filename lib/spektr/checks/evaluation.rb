@@ -1,7 +1,14 @@
 module Spektr
   class Checks
     class Evaluation < Base
+      def initialize(app, target)
+        super
+        @name = "Arbitrary code execution"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
+      end
+
       def run
+        return unless super
         [:eval, :instance_eval, :class_eval, :module_eval].each do |name|
           @target.find_calls(name).each do |call|
             call.arguments.each do |argument|

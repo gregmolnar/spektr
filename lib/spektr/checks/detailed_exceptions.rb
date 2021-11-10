@@ -1,7 +1,19 @@
 module Spektr
   class Checks
     class DetailedExceptions < Base
+
+      def name
+
+      end
+
+      def initialize(app, target)
+        super
+        @name = "Information Disclosure"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller"]
+      end
+
       def run
+        return unless super
         call = @target.find_calls(:consider_all_requests_local=).last
         if call && call.arguments.first.type == :true
           warn! @target, self, call.location, "Detailed exceptions are enabled in production"

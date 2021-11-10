@@ -58,13 +58,32 @@ module Spektr
     end
 
     class Receiver
-      attr_accessor :name, :type, :ast, :expanded
+      attr_accessor :name, :type, :ast, :expanded, :children
       def initialize(ast)
-        @expanded = expand!(ast)
-        (ast.type == :send && ast.children[0].is_a?(Parser::AST::Node)) ? @ast = ast.children[0] : @ast = ast
-        @type = @ast.type
-        @name = @ast.children.last
+        set_attributes(ast)
       end
+
+      def set_attributes(ast)
+        if [:begin, :send].include?(ast.type) && ast.children[0].is_a?(Parser::AST::Node)
+          return set_attributes(ast.children[0])
+        end
+        @ast = ast
+        @type = @ast.type
+        if ast.type == :dstr
+          @type = :dstr
+          @name = ast.children[0].children.first
+          @children = []
+          ast.children[1..].each do |ch|
+            @children << Receiver.new(ch)
+          end
+        else
+          @expanded = expand!(ast)
+          # (ast.type == :send && ast.children[0].is_a?(Parser::AST::Node)) ? @ast = ast.children[0] : @ast = ast
+          # @type = @ast.type
+          @name = @ast.children.last
+        end
+      end
+
 
       def expand!(ast, tree = [])
         if ast.is_a?(Parser::AST::Node) && ast.children.any?

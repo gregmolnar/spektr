@@ -1,8 +1,16 @@
 module Spektr
   class Checks
     class LinkToHref < Base
+
+      def initialize(app, target)
+        super
+        @name = "XSS in href param of link_to"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::View"]
+      end
+
       # TODO: check for user supplied model attributes too
       def run
+        return unless super
         block_locations = []
         @target.find_calls_with_block(:link_to).each do |call|
           block_locations << call.location

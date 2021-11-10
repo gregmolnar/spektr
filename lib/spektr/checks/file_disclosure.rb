@@ -1,7 +1,19 @@
 module Spektr
   class Checks
     class FileDisclosure < Base
+
+      def name
+        "File existence disclosure"
+      end
+
+      def initialize(app, target)
+        super
+        @name = "Command Injection"
+        @targets = ["Spektr::Targets::Base"]
+      end
+
       def run
+        return unless super
         config = @app.production_config.find_calls(:serve_static_assets=).first
         if config && config.arguments.first.type == :true
           warn! "root", self, nil, "File existence disclosure vulnerability"

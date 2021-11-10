@@ -1,7 +1,14 @@
 module Spektr
   class Checks
     class DefaultRoutes < Base
+      def initialize(app, target)
+        super
+        @name = "Dangerous default routes"
+        @targets = ["Spektr::Targets::Routes"]
+      end
+
       def run
+        return unless super
         check_for_cve_2014_0130
         check_for_default_routes
       end

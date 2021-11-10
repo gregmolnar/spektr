@@ -1,13 +1,18 @@
 module Spektr
   class Checks::Base
-
+    attr_accessor :name
     def initialize(app, target)
       @app = app
       @target = target
+      @targets = []
     end
 
     def run
-      return unless should_run?
+      return target_affected? || should_run?
+    end
+
+    def target_affected?
+      @targets.include?(@target.class.name)
     end
 
     def should_run?
@@ -27,9 +32,11 @@ module Spektr
     def version_affected
     end
 
-    def user_input?(type, name, ast = nil)
+    def user_input?(type, name, ast = nil, object = nil)
       case type
       when :ivar, :lvar
+        # TODO: handle helpers here too
+        return false unless @target.class.name == "Spektr::Targets::View"
         actions = []
         @app.controllers.each do |controller|
           actions = actions.concat controller.actions.select{ |action|
@@ -49,7 +56,11 @@ module Spektr
         ast.children.each do |child|
           return true if user_input?(child.type, child.children.last, child)
         end
-      when :sym, :str
+      when :dstr
+        object.children.each do |child|
+          return true if user_input?(child.type, child.name, child.ast)
+        end
+      when :sym, :str, :const
         # do nothing
       else
         raise "Unknown argument type #{type}"
@@ -78,7 +89,9 @@ module Spektr
         return true if _send.receiver && model_names.include?(_send.receiver.name)
       when :const
         return true if model_names.include? item.name
-      when :sym
+      when :dstr
+        # TODO: implement this
+      when :sym, :str
         # do nothing
       else
         raise "Unknown argument type #{item.type}"

@@ -17,7 +17,7 @@ module Spektr
       def find_calls(name, receiver = nil)
         calls = find(:send, name, @ast).map{ |ast| Exp::Send.new(ast) }
         if receiver
-          calls.select!{ |call| call.receiver.expanded == receiver }
+          calls.select!{ |call| call.receiver&.expanded == receiver }
         end
         calls
       end

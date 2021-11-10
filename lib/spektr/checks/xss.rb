@@ -1,9 +1,16 @@
 module Spektr
   class Checks
     class Xss < Base
+      def initialize(app, target)
+        super
+        @name = "XSS"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::View"]
+      end
+
       # TODO: tests for haml, xml, js
       # TODO: add check for raw calls
       def run
+        return unless super
         calls = @target.find_calls(:safe_expr_append=)
         calls.each do |call|
           call.arguments.each do |argument|
@@ -17,7 +24,7 @@ module Spektr
         end
         calls = @target.find_calls(:html_safe)
         calls.each do |call|
-          if user_input?(call.receiver.type, call.receiver.name)
+          if user_input?(call.receiver.type, call.receiver.name, nil, call.receiver)
             warn! @target, self, call.location, "Cross-Site Scripting: Unescaped #{call.receiver.name}"
           end
           if model_attribute?(call.receiver)

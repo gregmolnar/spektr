@@ -19,3 +19,6 @@
 <%= @post.title.html_safe %>
 <%= @post.title %>
 <%== @post.title %>
+
+
+<%= "/users/#{current_user.id}/messages.json".inspect.html_safe %>

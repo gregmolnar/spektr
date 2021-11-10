@@ -1,7 +1,15 @@
 module Spektr
   class Checks
     class Deserialize < Base
+
+      def initialize(app, target)
+        super
+        @name = "Unsafe object deserialization"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
+      end
+
       def run
+        return unless super
         check_csv
         check_yaml
         check_marshal

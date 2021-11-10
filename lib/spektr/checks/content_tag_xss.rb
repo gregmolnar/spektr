@@ -14,8 +14,14 @@ module Spektr
       #                                            |
       #            Escaped by default, can be explicitly escaped
       #            or not by passing in (true|false) as fourth argument
+      def initialize(app, target)
+        super
+        @name = "XSS in content_tag"
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::View"]
+      end
 
       def run
+        return unless super
         calls = @target.find_calls(:content_tag)
         # https://groups.google.com/d/msg/ruby-security-ann/8B2iV2tPRSE/JkjCJkSoCgAJ
         cve_2016_6316_check(calls)

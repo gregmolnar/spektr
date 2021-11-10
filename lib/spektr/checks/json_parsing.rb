@@ -1,7 +1,15 @@
 module Spektr
   class Checks
     class JsonParsing < Base
+
+      def initialize(app, target)
+        super
+        @name = "JSON parsing vulnerability"
+        @targets = ["Spektr::Targets::Base"]
+      end
+
       def run
+        return unless super
         check_cve_2013_0333
         check_cve_2013_0269
       end

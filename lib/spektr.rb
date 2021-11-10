@@ -1,3 +1,4 @@
+require "byebug"
 require "spektr/version"
 require "bundler"
 require "parser"
@@ -15,10 +16,12 @@ loader.eager_load
 module Spektr
   class Error < StandardError; end
 
-  def self.run
+  def self.run(root = nil, output_format = "terminal")
     checks = Checks.load
-    root = ARGV[0].nil? ? "./" : ARGV[0]
+    root = "./" if root.nil?
     @app = App.new(checks: checks, root: root)
     @app.load
+    @app.scan!
+    @app.report(output_format)
   end
 end
