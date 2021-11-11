@@ -1,11 +1,12 @@
 module Spektr
   class Warning
-    attr_accessor :path, :check, :location, :message
-    def initialize(path, check, location, message)
+    attr_accessor :path, :check, :location, :message, :confidence
+    def initialize(path, check, location, message, confidence = :high)
       @path = path
       @check = check
       @location = location
       @message = message
+      @confidence = confidence
     end
 
     def full_message

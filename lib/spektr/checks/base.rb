@@ -66,7 +66,12 @@ module Spektr
         end
       when :dstr
         object.children.each do |child|
-          return true if user_input?(child.type, child.name, child.ast)
+          if child.is_a?(Parser::AST::Node)
+            name, ast = nil, child
+          else
+            name, ast = child.name, child.ast
+          end
+          return true if user_input?(child.type, name, ast)
         end
       when :sym, :str, :const
         # do nothing
@@ -75,20 +80,24 @@ module Spektr
       end
     end
 
+    # TODO: this doesn't work properly
     def model_attribute?(item)
       model_names = @app.models.collect(&:name)
       case item.type
       when :ivar, :lvar
-        actions = []
-        @app.controllers.each do |controller|
-          actions = actions.concat controller.actions.select{ |action|
-            action.template == @target.view_path
-          }
-        end
-        actions.each do |action|
-          action.body.each do |exp|
-            if exp.is_a?(Exp::Ivasign) && exp.name == item.name
-              return exp.user_input?
+        # TODO: handle helpers here too
+        if ["Spektr::Targets::Controller", "Spektr::Targets::View"].include?(@target.class.name)
+          actions = []
+          @app.controllers.each do |controller|
+            actions = actions.concat controller.actions.select{ |action|
+              action.template == @target.view_path
+            }
+          end
+          actions.each do |action|
+            action.body.each do |exp|
+              if exp.is_a?(Exp::Ivasign) && exp.name == item.name
+                return exp.user_input?
+              end
             end
           end
         end

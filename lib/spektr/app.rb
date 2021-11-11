@@ -5,6 +5,8 @@ module Spektr
     def initialize(checks:, root: "./")
       @root = root
       @checks = checks
+      @controllers = []
+      @models = []
       @warnings = []
       @json_output = {
         app: {},
@@ -16,7 +18,7 @@ module Spektr
       loaded_files = []
 
       config_path = File.join(@root, "config", "environments", "production.rb")
-      @production_config = Targets::Base.new(config_path, File.read(config_path))
+      @production_config = Targets::Config.new(config_path, File.read(config_path))
 
       @initializers = initializer_paths.map do |path|
         loaded_files << path
@@ -28,7 +30,7 @@ module Spektr
       end
       @models = model_paths.map do |path|
         loaded_files << path
-        Targets::Base.new(path, File.read(path))
+        Targets::Model.new(path, File.read(path))
       end
       @views = view_paths.map do |path|
         loaded_files << path
@@ -60,6 +62,10 @@ module Spektr
         @routes.each do |view|
           check.new(self, view).run
         end if @routes
+        @initializers.each do |i|
+          check.new(self, i).run
+        end if @initializers
+
         check.new(self, @production_config).run
       end
       self

@@ -15,7 +15,7 @@ class CsrfSettingTest < Minitest::Test
     app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
     app.rails_version = Gem::Version.new("4.0.0")
     app.controllers = [Spektr::Targets::Controller.new("application_controller.rb", application_controller)]
-    controller = Spektr::Targets::Base.new("posts_controller.rb", code)
+    controller = Spektr::Targets::Controller.new("posts_controller.rb", code)
     check = Spektr::Checks::CsrfSetting.new(app, controller)
     check.run
     assert_equal 0, app.warnings.size
@@ -33,13 +33,13 @@ class CsrfSettingTest < Minitest::Test
     app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
     app.rails_version = Gem::Version.new("4.0.0")
     app.controllers = [Spektr::Targets::Controller.new("application_controller.rb", application_controller)]
-    controller = Spektr::Targets::Base.new("posts_controller.rb", code)
+    controller = Spektr::Targets::Controller.new("posts_controller.rb", code)
     check = Spektr::Checks::CsrfSetting.new(app, controller)
     check.run
     assert_equal 1, app.warnings.size
   end
 
-  def test_it__fails_when_skips_protection
+  def test_it_fails_when_skips_protection
     application_controller = <<-CODE
       class ApplicationController
         protect_from_forgery
@@ -53,7 +53,7 @@ class CsrfSettingTest < Minitest::Test
     app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
     app.rails_version = Gem::Version.new("4.0.0")
     app.controllers = [Spektr::Targets::Controller.new("application_controller.rb", application_controller)]
-    controller = Spektr::Targets::Base.new("posts_controller.rb", code)
+    controller = Spektr::Targets::Controller.new("posts_controller.rb", code)
     check = Spektr::Checks::CsrfSetting.new(app, controller)
     check.run
     assert_equal 1, app.warnings.size

@@ -26,23 +26,24 @@ module Spektr
     end
 
     class Argument
-      attr_accessor :name, :type, :ast
+      attr_accessor :name, :type, :ast, :children
       def initialize(ast)
         if ast.type == :begin
           ast = ast.children.first
         end
         @ast = ast
         argument = if [:xstr, :hash].include? ast.type
-          ast
-        elsif ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
-          ast.children.first.children.first
-        elsif ast.children.first.is_a?(Parser::AST::Node)
-          ast.children.first
-        else
-          ast
-        end
+                    ast
+                  elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
+                    ast.children.first.children.first
+                  elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node)
+                    ast.children.first
+                  else
+                    ast
+                  end
         @type = argument.type
         @name = argument.children.last
+        @children = argument.children
       end
     end
 
@@ -60,26 +61,25 @@ module Spektr
     class Receiver
       attr_accessor :name, :type, :ast, :expanded, :children
       def initialize(ast)
+        @children = []
         set_attributes(ast)
       end
 
       def set_attributes(ast)
-        if [:begin, :send].include?(ast.type) && ast.children[0].is_a?(Parser::AST::Node)
+        if [:begin].include?(ast.type) && ast.children[0].is_a?(Parser::AST::Node)
           return set_attributes(ast.children[0])
         end
         @ast = ast
-        @type = @ast.type
         if ast.type == :dstr
           @type = :dstr
           @name = ast.children[0].children.first
-          @children = []
           ast.children[1..].each do |ch|
             @children << Receiver.new(ch)
           end
         else
           @expanded = expand!(ast)
-          # (ast.type == :send && ast.children[0].is_a?(Parser::AST::Node)) ? @ast = ast.children[0] : @ast = ast
-          # @type = @ast.type
+          (ast.type == :send && ast.children[0].is_a?(Parser::AST::Node)) ? @ast = ast.children[0] : @ast = ast
+          @type = @ast.type
           @name = @ast.children.last
         end
       end

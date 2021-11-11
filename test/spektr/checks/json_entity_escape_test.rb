@@ -15,4 +15,16 @@ class JsonEntityEscapeTest < Minitest::Test
     check.run
     assert_equal 1, app.warnings.size
   end
+
+  def test_it_fails_when_disabled_in_initializer
+    code = <<-CODE
+      # frozen_string_literal: true
+      ActiveSupport::JSON::Encoding::escape_html_entities_in_json = false
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::JsonEntityEscape])
+    config = Spektr::Targets::Base.new("html_entities.rb", code)
+    check = Spektr::Checks::JsonEntityEscape.new(app, config)
+    check.run
+    assert_equal 1, app.warnings.size
+  end
 end
