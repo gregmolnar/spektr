@@ -73,7 +73,7 @@ module Spektr
           end
           return true if user_input?(child.type, name, ast)
         end
-      when :sym, :str, :const
+      when :sym, :str, :const, :int
         # do nothing
       else
         raise "Unknown argument type #{type}"

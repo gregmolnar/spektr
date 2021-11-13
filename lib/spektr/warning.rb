@@ -1,12 +1,15 @@
 module Spektr
   class Warning
-    attr_accessor :path, :check, :location, :message, :confidence
+    attr_accessor :path, :check, :location, :message, :confidence, :line
     def initialize(path, check, location, message, confidence = :high)
       @path = path
       @check = check
       @location = location
       @message = message
       @confidence = confidence
+      if path && @location
+        @line = IO.readlines(path)[@location.line - 1].strip
+      end
     end
 
     def full_message

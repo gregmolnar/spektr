@@ -6,7 +6,11 @@ module Spektr
       def initialize(ast)
         super
         @receiver = Receiver.new(ast.children[0]) if ast.children[0]
-        @name = ast.children[1]
+        if ast.children.first.is_a?(Parser::AST::Node)
+          @name = ast.children.first.children.last
+        else
+          @name = ast.children[1]
+        end
         children = ast.children[2..]
         children.each do |child|
           case child.type
@@ -48,13 +52,15 @@ module Spektr
     end
 
     class Option
-      attr_accessor :name, :key, :value, :type, :value_type
+      attr_accessor :name, :key, :value, :type, :value_name, :value_type
       def initialize(ast)
-        @name = ast.children.first.children.last
         @key = ast.children.first
-        @value = ast.children.last.children.last
+        @name = ast.children.first.children.last
+        @type = ast.type
+
+        @value = ast.children.last
+        @value_name = ast.children.last.children.last
         @value_type = ast.children.last.type
-        @type = ast.children.last.type
       end
     end
 

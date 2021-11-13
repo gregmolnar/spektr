@@ -84,6 +84,25 @@ module Spektr
         end
         result
       end
+
+      def ast_to_exp(ast)
+        case ast.type
+        when :send
+          Exp::Send.new(ast)
+        when :def
+          Exp::Definition.new(ast)
+        when :ivasgn
+          Exp::Ivasgin.new(ast)
+        when :lvasign
+          Exp::Lvasign.new(ast)
+        when :xstr
+          Exp::Xstr.new(ast)
+        when :sym, :int
+          Exp::Base.new(ast)
+        else
+          raise "Unknown type #{ast.type}"
+        end
+      end
     end
   end
 end

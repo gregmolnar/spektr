@@ -20,6 +20,7 @@ module Spektr
         end
         calls.each do |call|
           argument = call.arguments.first
+          next if argument.nil?
           if user_input?(argument.type, argument.name)
             # check for permit with arguments
             next if argument.ast.children[1] == :permit && argument.ast.children[2]

@@ -85,7 +85,8 @@ module Spektr
           name: warning.check.name,
           description: warning.message,
           path: warning.path,
-          location: warning.location&.line
+          location: warning.location&.line,
+          line: warning.line
         }
       end
       case format
