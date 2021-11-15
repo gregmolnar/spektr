@@ -52,6 +52,5 @@ class MassAssignmentTest < Minitest::Test
     check.run
     assert_equal 1, @app.warnings.size
   end
-
 end
 

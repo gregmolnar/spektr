@@ -25,6 +25,7 @@ module Spektr
 
     def warn!(target, check, location, message, confidence = :high)
       path = target.is_a?(String) ? target : target.path
+      path.gsub!(@app.root, "")
       return if dupe?(path, location, message)
       @app.warnings << Warning.new(path, check, location, message, confidence)
     end
