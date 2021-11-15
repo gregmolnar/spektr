@@ -39,7 +39,6 @@ class MassAssignmentTest < Minitest::Test
     assert_equal 0, @app.warnings.size
   end
 
-
   def test_it_fails_with_permit_bang
     code = <<-CODE
       class BlogController

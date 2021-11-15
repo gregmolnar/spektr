@@ -7,7 +7,7 @@ module Spektr
       @location = location
       @message = message
       @confidence = confidence
-      if path && @location
+      if path && @location && File.exist?(path)
         @line = IO.readlines(path)[@location.line - 1].strip
       end
     end

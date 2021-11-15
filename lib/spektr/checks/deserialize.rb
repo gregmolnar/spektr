@@ -47,7 +47,11 @@ module Spektr
       def check_method(method, receiver)
         calls = @target.find_calls(method, receiver)
         calls.each do |call|
-          if user_input?(call.arguments.first.type, call.arguments.first.name)
+          argument = call.arguments.first
+          if argument.ast.type == :send && argument.ast.children.last.children.first.is_a?(Parser::AST::Node)
+            argument = Exp::Argument.new(argument.ast.children.last.children.first)
+          end
+          if user_input?(argument.type, argument.name, argument.ast)
             warn! @target, self, call.location, "#{receiver}.#{method} is called with user supplied value"
           end
         end

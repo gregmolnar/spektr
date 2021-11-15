@@ -10,9 +10,8 @@ module Spektr
 
       def run
         return unless super
-
         calls = @target.find_calls(:cookies_serializer=)
-        if calls.any?{ |call| call.receiver.expanded == "Rails.application.config.action_dispatch" }
+        if calls.any?{ |call| call.receiver.expanded == "Rails.application.config.action_dispatch" && call.arguments.first.name == :marshal }
           warn! @target, self, calls.first.location, "Marshal cookie serialization strategy can lead to remote code execution"
         end
       end

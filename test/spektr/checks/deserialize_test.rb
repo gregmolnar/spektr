@@ -43,11 +43,12 @@ class DeserializeTest < Minitest::Test
           Marshal.load("test")
           Marshal.load(params[:path])
           Marshal.restore(params[:path])
+          Marshal.load(Base64.decode64(params[:user]))
         end
       end
     CODE
     app = run_check(code)
-    assert_equal 2, app.warnings.size
+    assert_equal 3, app.warnings.size
   end
 
   def test_with_oj

@@ -22,9 +22,16 @@ module Spektr
           argument = call.arguments.first
           next if argument.nil?
           if user_input?(argument.type, argument.name)
+            # we check for permit! separately
+            next if argument.ast.children[1] == :permit!
             # check for permit with arguments
             next if argument.ast.children[1] == :permit && argument.ast.children[2]
             warn! @target, self, call.location, "Mass assignment"
+          end
+        end
+        @target.find_calls(:permit!).each do |call|
+          if call.arguments.none?
+            warn! @target, self, call.location, "permit! allows any keys, use it with caution!", :medium
           end
         end
       end
