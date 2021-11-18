@@ -1,4 +1,3 @@
-require "byebug"
 require "spektr/version"
 require "bundler"
 require "parser"
