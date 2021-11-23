@@ -66,7 +66,7 @@ module Spektr
           return true if user_input?(child.type, child.children.last, child)
         end
       when :dstr
-        object.children.each do |child|
+        object&.children&.each do |child|
           if child.is_a?(Parser::AST::Node)
             name, ast = nil, child
           else
@@ -74,7 +74,7 @@ module Spektr
           end
           return true if user_input?(child.type, name, ast)
         end
-      when :sym, :str, :const, :int
+      when :sym, :str, :const, :int, :cbase
         # do nothing
       else
         raise "Unknown argument type #{type}"
