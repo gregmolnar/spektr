@@ -18,7 +18,7 @@ module Spektr
       loaded_files = []
 
       config_path = File.join(@root, "config", "environments", "production.rb")
-      @production_config = Targets::Config.new(config_path, File.read(config_path))
+      @production_config = Targets::Config.new(config_path, File.read(config_path)) if File.exist?(config_path)
 
       @initializers = initializer_paths.map do |path|
         loaded_files << path
