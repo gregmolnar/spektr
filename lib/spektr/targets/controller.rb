@@ -21,7 +21,7 @@ module Spektr
           @template = File.join(controller.name.delete_suffix("Controller").underscore, name.to_s)
           @body.each do |exp|
             if exp.send?
-              if exp.name == :render
+              if exp.name == :render && exp.arguments.any?
                 if exp.arguments.first.type == :sym
                   @template = File.join(controller.name.delete_suffix("Controller").underscore, exp.arguments.first.name.to_s)
                 elsif
