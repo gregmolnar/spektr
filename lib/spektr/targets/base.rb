@@ -7,7 +7,11 @@ module Spektr
         @ast = Parser::CurrentRuby.parse(content)
         @path = path
         return unless @ast
-        @name = @ast.children.first.children.last.to_s
+        if @ast.children.first&.children
+          @name = @ast.children.first.children.last.to_s
+        else
+          @name = @path.split("/").last
+        end
         @current_method_type = :public
         if @ast.children[1] && @ast.children[1].is_a?(Parser::AST::Node)
           @parent = @ast.children[1]&.children&.last&.to_s

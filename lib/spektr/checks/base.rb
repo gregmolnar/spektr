@@ -8,6 +8,7 @@ module Spektr
     end
 
     def run
+      ::Spektr.logger.debug "Running #{self.class.name} on #{@target.path}"
       return target_affected? && should_run?
     end
 
@@ -63,6 +64,7 @@ module Spektr
         return true if [:params, :cookies, :request].include? name
       when :xstr, :begin
         ast.children.each do |child|
+          next unless child.is_a?(Parser::AST::Node)
           return true if user_input?(child.type, child.children.last, child)
         end
       when :dstr
