@@ -5,6 +5,7 @@ class CommandInjectionTest < Minitest::Test
     @code = <<-CODE
       class ApplicationController
         def index
+          `ls /home`
           `ls \#{params[:directory]}`
           Kernel.open(params[:directory])
         end

@@ -10,7 +10,13 @@ module Spektr
       def run
         return unless super
         # backticks
-        check_calls(@target.find_xstr)
+        @target.find_xstr.each do |call|
+          argument = call.arguments.first
+          next unless argument
+          if user_input?(argument.type, argument.name, argument.ast, argument)
+            warn! @target, self, call.location, "Command injection in #{call.name}"
+          end
+        end
 
         targets = ["IO", "Open3", "Kernel", "POSIX::Spawn", "Process", nil]
         methods = [:capture2, :capture2e, :capture3, :exec, :pipeline, :pipeline_r,
