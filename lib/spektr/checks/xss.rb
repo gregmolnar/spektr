@@ -15,7 +15,7 @@ module Spektr
         calls.concat(@target.find_calls(:raw))
         calls.each do |call|
           call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name)
+            if user_input?(argument.type, argument.name, argument.ast)
               warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
             end
             if model_attribute?(argument)
@@ -25,7 +25,7 @@ module Spektr
         end
         calls.each do |call|
           call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name)
+            if user_input?(argument.type, argument.name, argument.ast)
               warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
             end
             if model_attribute?(argument)
@@ -35,7 +35,7 @@ module Spektr
         end
         calls = @target.find_calls(:html_safe)
         calls.each do |call|
-          if user_input?(call.receiver.type, call.receiver.name, nil, call.receiver)
+          if user_input?(call.receiver.type, call.receiver.name, call.receiver.ast, call.receiver)
             warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
           end
           if model_attribute?(call.receiver)

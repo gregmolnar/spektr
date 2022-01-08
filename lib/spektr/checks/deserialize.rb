@@ -38,7 +38,7 @@ module Spektr
         safe_default = false
         safe_default = true if @target.find_calls(:mimic_JSON, "Oj").any?
         call = @target.find_calls(:default_options=, "Oj").last
-        safe_default = true if call && call.options[:mode].value != :object
+        safe_default = true if call && call.options[:mode]&.value != :object
         unless safe_default
           check_method(:load, "Oj")
         end

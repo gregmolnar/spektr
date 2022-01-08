@@ -13,7 +13,7 @@ module Spektr
           calls = @target.find_calls(:create_with)
           calls.each do |call|
             call.arguments.each do |argument|
-              if user_input?(argument.type, argument.name)
+              if user_input?(argument.type, argument.name, argument.ast)
                 next if argument.ast.children[1] == :permit
                 warn! @target, self, call.location, "create_with is vulnerable to strong params bypass"
               end

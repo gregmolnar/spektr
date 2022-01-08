@@ -33,6 +33,7 @@ module Spektr
         # TODO: might need to exclude tempfile and ActiveStorage::Filename
         calls.each do |call|
           file_name = call.arguments.first
+          next unless file_name
           if user_input?(file_name.type, file_name.name, file_name.ast, file_name)
             warn! @target, self, call.location, "Command injection in #{call.name}"
           # TODO: interpolation, but might be safe, we should make this better

@@ -28,7 +28,7 @@ module Spektr
 
         calls.each do |call|
           call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name) && @app.rails_version < Gem::Version.new("3.0")
+            if user_input?(argument.type, argument.name, argument.ast) && @app.rails_version < Gem::Version.new("3.0")
               warn! @target, self, call.location, "Unescaped parameter in content_tag"
             end
           end

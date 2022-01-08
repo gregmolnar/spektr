@@ -21,7 +21,8 @@ module Spektr
         calls.each do |call|
           argument = call.arguments.first
           next if argument.nil?
-          if user_input?(argument.type, argument.name)
+          ::Spektr.logger.debug "Mass assignment check at #{call.location.line}"
+          if user_input?(argument.type, argument.name, call.ast)
             # we check for permit! separately
             next if argument.ast.children[1] == :permit!
             # check for permit with arguments

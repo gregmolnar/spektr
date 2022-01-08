@@ -61,6 +61,10 @@ module Spektr
           end
         end
       when :send
+        if ast.children.first&.type == :send
+          child = ast.children.first
+          return user_input?(child.type, child.children.last, child)
+        end
         return true if [:params, :cookies, :request].include? name
       when :xstr, :begin
         ast.children.each do |child|
@@ -76,10 +80,20 @@ module Spektr
           end
           return true if user_input?(child.type, name, ast)
         end
-      when :sym, :str, :const, :int, :cbase
+      when :lvasgn
+        ast.children.each do |child|
+          next unless child.is_a?(Parser::AST::Node)
+          return true if user_input?(child.type, child.children.last, child)
+        end
+      when :block
+        ast.children.each do |child|
+          next unless child.is_a?(Parser::AST::Node)
+          return true if user_input?(child.type, child.children.last, child)
+        end
+      when :sym, :str, :const, :int, :cbase, :true, :self, :args
         # do nothing
       else
-        raise "Unknown argument type #{type}"
+        raise "Unknown argument type #{type} #{name} #{ast.inspect}"
       end
     end
 
@@ -93,7 +107,7 @@ module Spektr
           actions = []
           @app.controllers.each do |controller|
             actions = actions.concat controller.actions.select{ |action|
-              action.template == @target.view_path
+              action.template == @target.view_path if @target.respond_to? :view_path
             }
           end
           actions.each do |action|
@@ -109,6 +123,11 @@ module Spektr
         return true if _send.receiver && model_names.include?(_send.receiver.name)
       when :const
         return true if model_names.include? item.name
+      when :block
+        item.children.each do |child|
+          next unless child.is_a?(Parser::AST::Node)
+          return true if model_input?(child)
+        end
       when :dstr
         # TODO: implement this
       when :sym, :str

@@ -37,6 +37,7 @@ module Spektr
         Targets::View.new(path, File.read(path))
       end
       @routes = [File.join(@root, "config", "routes.rb")].map do |path|
+        next unless File.exists? path
         loaded_files << path
         Targets::Routes.new(path, File.read(path))
       end
