@@ -4,6 +4,7 @@ class CsrfSettingTest < Minitest::Test
 
   def test_it_does_not_fail_when_parent_enables_protection
     application_controller = <<-CODE
+      require "foobar"
       class ApplicationController
         protect_from_forgery
       end

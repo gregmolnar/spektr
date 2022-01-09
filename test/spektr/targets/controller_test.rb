@@ -2,7 +2,7 @@ require "test_helper"
 
 class ControllerTest < Minitest::Test
   def setup
-    code = <<-CODE
+      code = <<-CODE
       class ApplicationController
         http_basic_authenticate_with name: "dhh", password: "secret", except: :index
 
@@ -26,6 +26,13 @@ class ControllerTest < Minitest::Test
   end
 
   def test_it_sets_name
+    assert_equal "ApplicationController", @controller.name
+    code = <<-CODE
+    require "foobar"
+    class ApplicationController
+    end
+    CODE
+    @controller = Spektr::Targets::Controller.new("application_controller.rb", code)
     assert_equal "ApplicationController", @controller.name
   end
 
