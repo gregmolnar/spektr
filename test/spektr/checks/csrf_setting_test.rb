@@ -21,7 +21,7 @@ class CsrfSettingTest < Minitest::Test
     assert_equal 0, app.warnings.size
   end
 
-  def test_it_does_not_fail_when_parent_does_not_enable_protection
+  def test_it_fails_when_parent_does_not_enable_protection
     application_controller = <<-CODE
       class ApplicationController
       end
