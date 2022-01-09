@@ -39,4 +39,35 @@ class CommandInjectionTest < Minitest::Test
     check.run
     assert_equal 1, app.warnings.size
   end
+
+  def test_it_fails_with_exec
+    code = <<-CODE
+      exec("ls \#{params[:directory]}")
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::CommandInjection])
+    model = Spektr::Targets::Model.new("benefits.rb", code)
+    app.models = [model]
+    check = Spektr::Checks::CommandInjection.new(app, model)
+    check.run
+    assert_equal 1, app.warnings.size
+  end
+
+
+  def test_it_does_not_fail_on_db_exec
+    code = <<-CODE
+      rows = DB.exec(<<~SQL, args)
+        UPDATE post_timings
+         SET msecs = msecs + :msecs
+         WHERE topic_id = :topic_id
+          AND user_id = :user_id
+          AND post_number = :post_number
+      SQL
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::CommandInjection])
+    model = Spektr::Targets::Model.new("benefits.rb", code)
+    app.models = [model]
+    check = Spektr::Checks::CommandInjection.new(app, model)
+    check.run
+    assert_equal 0, app.warnings.size
+  end
 end

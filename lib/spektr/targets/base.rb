@@ -7,7 +7,7 @@ module Spektr
         @ast = Parser::CurrentRuby.parse(content)
         @path = path
         return unless @ast
-        if @ast.children.first&.children
+        if @ast.children.first.is_a?(Parser::AST::Node) && @ast.children.first.children
           @name = @ast.children.first.children.last.to_s
         else
           @name = @path.split("/").last
@@ -22,6 +22,8 @@ module Spektr
         calls = find(:send, name, @ast).map{ |ast| Exp::Send.new(ast) }
         if receiver
           calls.select!{ |call| call.receiver&.expanded == receiver }
+        elsif receiver == false
+          calls.select!{ |call| call.receiver == nil }
         end
         calls
       end
