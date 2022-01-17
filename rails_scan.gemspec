@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "pastel"
   spec.add_dependency "better_html"
   spec.add_dependency "erubi"
+  spec.add_dependency "haml"
   spec.add_dependency "tty-option"
 
   spec.add_development_dependency "byebug"

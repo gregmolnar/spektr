@@ -4,6 +4,7 @@ require "parser"
 require "parser/current"
 require "unparser"
 require "erb"
+require "haml"
 require "active_support/core_ext/string/inflections"
 require "logger"
 
