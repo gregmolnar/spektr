@@ -32,10 +32,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency "parser", "~> 3.0.0"
   spec.add_dependency "unparser", "~> 0.6.0"
   spec.add_dependency "pastel"
-  spec.add_dependency "better_html"
   spec.add_dependency "erubi"
-  spec.add_dependency "haml"
+  spec.add_dependency "haml", "~>5.1"
   spec.add_dependency "tty-option"
+  spec.add_dependency "activesupport", "~> 6.1.0"
+
 
   spec.add_development_dependency "byebug"
   spec.add_development_dependency "guard"
