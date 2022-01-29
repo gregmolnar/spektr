@@ -13,6 +13,7 @@ module Spektr
         end
         children = ast.children[2..]
         children.each do |child|
+          next unless child.is_a?(Parser::AST::Node)
           case child.type
           when :hash
             if children.size == 1 || children.last == child
