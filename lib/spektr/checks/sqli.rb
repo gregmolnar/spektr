@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "SQL Injection"
+        @name = "SQL Injection"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Model"]
       end
 

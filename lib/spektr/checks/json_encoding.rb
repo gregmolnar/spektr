@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "XSS by missing JSON encoding"
+        @type = "Cross-Site Scripting"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
       end
 

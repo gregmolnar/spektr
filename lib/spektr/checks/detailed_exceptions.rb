@@ -9,6 +9,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Information Disclosure"
+        @type = "Information Disclosure"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller"]
       end
 

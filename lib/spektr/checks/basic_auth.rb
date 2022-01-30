@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Basic Authentication"
+        @type = "Password Plaintext Storage"
         @targets = ["Spektr::Targets::Controller"]
       end
 

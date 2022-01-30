@@ -9,7 +9,9 @@ module Spektr
 
       def run
         return unless super
+        @type = "Remote Code Execution"
         check_for_cve_2014_0130
+        @type = "Default routes"
         check_for_default_routes
       end
 

@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Timing attack in basic auth (CVE-2015-7576)"
+        @type = "Timing attack"
         @targets = ["Spektr::Targets::Controller"]
       end
 

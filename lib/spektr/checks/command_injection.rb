@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Command Injection"
+        @type = "Command Injection"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Model", "Spektr::Targets::Routes", "Spektr::Targets::View"]
       end
 

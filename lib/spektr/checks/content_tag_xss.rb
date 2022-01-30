@@ -17,6 +17,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "XSS in content_tag"
+        @type = "Cross-Site Scripting"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::View"]
       end
 

@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "HTTP MIME type header DoS (CVE-2013-6414)"
+        @type = "Denial of Service"
         @targets = ["Spektr::Targets::Base"]
       end
 

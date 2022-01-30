@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "XSS in href param of link_to"
+        @type = "Cross-Site Scripting"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::View"]
       end
 

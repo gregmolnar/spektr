@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Strong parameter bypass (CVE-2014-3514)"
+        @type = "Input validation"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
       end
 

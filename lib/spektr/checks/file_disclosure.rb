@@ -2,13 +2,10 @@ module Spektr
   class Checks
     class FileDisclosure < Base
 
-      def name
-        "File existence disclosure"
-      end
-
       def initialize(app, target)
         super
-        @name = "Command Injection"
+        @name = "File existence disclosure"
+        @type = "Information Disclosure"
         @targets = ["Spektr::Targets::Base"]
       end
 

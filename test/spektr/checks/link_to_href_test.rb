@@ -32,4 +32,15 @@ class LinkToHrefTest < Minitest::Test
     assert_equal 2, app.warnings.size
   end
 
+  def it_does_not_fail_with_url_helpers
+    code = <<-CODE
+      <%= link_to school.activities.count, school_activities_path(school) %>
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::LinkToHref])
+    view = Spektr::Targets::View.new("index.html.erb", code)
+    check = Spektr::Checks::LinkToHref.new(app, view)
+    check.run
+    assert_equal 0, app.warnings.size
+  end
+
 end

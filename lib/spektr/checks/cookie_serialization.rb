@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Unsafe deserialisation"
+        @type = "Insecure Deserialization"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller"]
       end
 

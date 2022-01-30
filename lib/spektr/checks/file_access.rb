@@ -9,6 +9,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "File access"
+        @type = "Information Disclosure"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
       end
 

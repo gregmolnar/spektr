@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "CSRF token forgery vulnerability (CVE-2020-8166)"
+        @type = "Cross-Site Request Forgery"
         @targets = ["Spektr::Targets::Base"]
       end
 

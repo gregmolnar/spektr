@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "HTML escaping is disabled for JSON output"
+        @type = "Cross-Site Scripting"
         @targets = ["Spektr::Targets::Config", "Spektr::Targets::Base"]
       end
 

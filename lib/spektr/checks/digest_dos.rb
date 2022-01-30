@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "DoS in digest authentication(CVE-2012-3424)"
+        @type = "Denial of Service"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller"]
       end
 

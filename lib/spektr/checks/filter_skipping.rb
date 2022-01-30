@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Default routes filter skipping"
+        @type = "Default Routes"
         @targets = ["Spektr::Targets::Routes"]
       end
 

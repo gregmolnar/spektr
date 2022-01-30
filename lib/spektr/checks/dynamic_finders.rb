@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "SQL Injection by unsafe usage of find_by_*"
+        @type = "SQL Injection"
         @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::View"]
       end
 

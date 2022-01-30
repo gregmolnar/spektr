@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "XSS in i18n (CVE-2013-4491)"
+        @type = "Cross-Site Scripting"
         @targets = ["Spektr::Targets::Base"]
       end
 

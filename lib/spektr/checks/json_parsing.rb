@@ -5,6 +5,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "JSON parsing vulnerability"
+        @type = "Remote Code Execution"
         @targets = ["Spektr::Targets::Base"]
       end
 

@@ -4,6 +4,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Cross-Site Request Forgery"
+        @type = "Cross-Site Request Forgery"
         @targets = ["Spektr::Targets::Controller"]
       end
 

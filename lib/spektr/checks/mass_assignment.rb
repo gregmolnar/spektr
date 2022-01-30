@@ -6,6 +6,7 @@ module Spektr
       def initialize(app, target)
         super
         @name = "Mass Assignment"
+        @type = "Input Validation"
         @targets = ["Spektr::Targets::Controller"]
       end
 
