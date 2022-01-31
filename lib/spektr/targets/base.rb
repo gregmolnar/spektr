@@ -7,25 +7,15 @@ module Spektr
         @ast = Parser::CurrentRuby.parse(content)
         @path = path
         return unless @ast
-        if @ast.children.any?
-          if @ast.children.first.is_a?(Parser::AST::Node) && @ast.children.first.type == :const
-            @name = @ast.children.first.children.last.to_s
-          else
-            if name = @ast.children.find{|e| e.is_a?(Parser::AST::Node) && e.type == :class }
-              @name = name.children.first.children.last.to_s
-            elsif name = @ast.children.find{|e| e.is_a?(Parser::AST::Node) && e.type == :module }
-              @name = name.children.first.children.last.to_s
-            else
-              @name = @path.split("/").last
-            end
-          end
-        else
-          @name = @path.split("/").last
-        end
+
+        processor = Spektr::Processors::Base.new
+        processor.process(@ast)
+        @name = processor.name
+        @name = @path.split("/").last if @name.blank?
+
+
         @current_method_type = :public
-        if @ast.children[1] && @ast.children[1].is_a?(Parser::AST::Node)
-          @parent = @ast.children[1]&.children&.last&.to_s
-        end
+        @parent = processor.parent_name
       end
 
       def find_calls(name, receiver = nil)
