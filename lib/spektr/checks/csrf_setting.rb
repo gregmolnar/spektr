@@ -10,10 +10,14 @@ module Spektr
 
       def run
         return unless super
+        return if @target.concern?
         enabled = false
-        if @target.parent
-          parent_controller = @app.controllers.find{|c| c.name == @target.parent }
-           enabled = parent_controller && parent_controller.find_calls(:protect_from_forgery).any?
+        target = @target
+        while target
+          parent_controller = target.find_parent(@app.controllers)
+          enabled = parent_controller && parent_controller.find_calls(:protect_from_forgery).any?
+          break if enabled || parent_controller.nil?
+          target = parent_controller
         end
         return if enabled && @target.find_calls(:skip_forgery_protection).none?
 

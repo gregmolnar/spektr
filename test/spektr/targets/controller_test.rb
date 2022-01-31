@@ -1,30 +1,6 @@
 require "test_helper"
 
 class ControllerTest < Minitest::Test
-  def setup
-      code = <<-CODE
-      class ApplicationController
-        http_basic_authenticate_with name: "dhh", password: "secret", except: :index
-
-        def index
-        end
-
-        def show
-        end
-
-        def update
-          render :edit
-        end
-
-        private
-          def authenticate!
-          end
-      end
-    CODE
-
-    @controller = Spektr::Targets::Controller.new("application_controller.rb", code)
-  end
-
   def test_it_sets_name
     code = <<-CODE
     require "foobar"
@@ -71,7 +47,7 @@ class ControllerTest < Minitest::Test
     end
     CODE
     controller = Spektr::Targets::Controller.new("application_controller.rb", code)
-    assert_nil controller.parent
+    assert_equal "", controller.parent
     code = <<-CODE
     class PostsController < ApplicationController
     end
@@ -93,7 +69,7 @@ class ControllerTest < Minitest::Test
     end
     CODE
     controller = Spektr::Targets::Controller.new("application_controller.rb", code)
-    assert_equal "ApplicationController", controller.parent
+    assert_equal "Admin::ApplicationController", controller.parent
   end
 
   def test_it_sets_template
@@ -133,13 +109,39 @@ class ControllerTest < Minitest::Test
     assert_equal "devise/sessions/index", controller.actions.first.template
   end
 
+  def setup_application_controller
+      code = <<-CODE
+      class ApplicationController
+        http_basic_authenticate_with name: "dhh", password: "secret", except: :index
+
+        def index
+        end
+
+        def show
+        end
+
+        def update
+          render :edit
+        end
+
+        private
+          def authenticate!
+          end
+      end
+    CODE
+
+    @controller = Spektr::Targets::Controller.new("application_controller.rb", code)
+  end
+
   def test_it_finds_call
+    setup_application_controller
     calls = @controller.find_calls :http_basic_authenticate_with
     refute_empty calls
     assert_equal 1, calls.size
   end
 
   def test_it_registers_actions
+    setup_application_controller
     assert_equal 3, @controller.actions.size
     assert_empty @controller.actions.first.body
     refute_empty @controller.actions[2].body

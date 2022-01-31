@@ -40,6 +40,52 @@ class CsrfSettingTest < Minitest::Test
     assert_equal 1, app.warnings.size
   end
 
+  def test_it_doesnot_fails_with_multi_level_parents
+    application_controller = <<-CODE
+      class ApplicationController
+        protect_from_forgery
+      end
+    CODE
+    admin_controller = <<-CODE
+      class AdminController < ApplicationController
+      end
+    CODE
+
+    code = <<-CODE
+      class PostsController < AdminController
+      end
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
+    app.rails_version = Gem::Version.new("4.0.0")
+    app.controllers = [Spektr::Targets::Controller.new("application_controller.rb", application_controller), Spektr::Targets::Controller.new("admin_controller.rb", admin_controller)]
+    controller = Spektr::Targets::Controller.new("posts_controller.rb", code)
+    check = Spektr::Checks::CsrfSetting.new(app, controller)
+    check.run
+    assert_equal 0, app.warnings.size
+    generic_controller = <<-CODE
+      module Admin
+        class GenericController < ApplicationController
+        end
+      end
+    CODE
+    code = <<-CODE
+      module Admin
+        class PostsController < GenericController
+        end
+      end
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
+    app.rails_version = Gem::Version.new("4.0.0")
+    app.controllers = [
+      Spektr::Targets::Controller.new("application_controller.rb", application_controller),
+      Spektr::Targets::Controller.new("generic_controller.rb", generic_controller)
+    ]
+    controller = Spektr::Targets::Controller.new("posts_controller.rb", code)
+    check = Spektr::Checks::CsrfSetting.new(app, controller)
+    check.run
+    assert_equal 0, app.warnings.size
+  end
+
   def test_it_fails_when_skips_protection
     application_controller = <<-CODE
       class ApplicationController
