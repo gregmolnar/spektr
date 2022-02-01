@@ -1,10 +1,10 @@
 module Spektr
   class Checks
 
-    def self.load
-      Checks.constants.map do |c|
-        Checks.const_get(c)if Checks.const_get(c).is_a?(Class)
-      end
+    def self.load(only = false)
+      Checks.constants.select do |c|
+        Checks.const_get(c).is_a?(Class) && (!only || only && only == c.to_s)
+      end.map{|c| Checks.const_get(c) }
     end
   end
 end

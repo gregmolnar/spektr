@@ -19,9 +19,9 @@ loader.eager_load
 module Spektr
   class Error < StandardError; end
 
-  def self.run(root = nil, output_format = "terminal", debug = false)
+  def self.run(root = nil, output_format = "terminal", debug = false, checks = [])
     @log_level = debug ? Logger::DEBUG : Logger::WARN
-    checks = Checks.load
+    checks = Checks.load(checks)
     root = "./" if root.nil?
     @app = App.new(checks: checks, root: root)
     @app.load

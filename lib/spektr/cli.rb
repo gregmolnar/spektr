@@ -19,6 +19,11 @@ module Spektr
       desc "output format terminal or json"
     end
 
+    flag :check do
+      long "--check string"
+      desc "run this single check"
+    end
+
     flag :debug do
       long "--debug"
       short "-d"
@@ -36,7 +41,7 @@ module Spektr
         print help
         exit
       else
-        report = Spektr.run(params[:root], params[:output_format], params[:debug])
+        report = Spektr.run(params[:root], params[:output_format], params[:debug], params[:check])
         case params[:output_format]
         when "json"
           puts JSON.pretty_generate report
