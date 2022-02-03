@@ -10,7 +10,7 @@ module Spektr
       @warnings = []
       @json_output = {
         app: {},
-        advisories: []
+        advisories: [],
       }
     end
 
@@ -87,7 +87,15 @@ module Spektr
           description: warning.message,
           path: warning.path,
           location: warning.location&.line,
-          line: warning.line
+          line: warning.line,
+        }
+      end
+
+      @json_output[:summary] = []
+
+      @json_output[:advisories].group_by { |a| a[:name] }.each do |n, i|
+        @json_output[:summary] << {
+          n => i.size,
         }
       end
       case format
@@ -123,11 +131,11 @@ module Spektr
     end
 
     def has_gem?(name)
-      gem_specs.any?{ |spec| spec.name == name }
+      gem_specs.any? { |spec| spec.name == name }
     end
 
     def rails_version
-      @rails_version ||= Gem::Version.new(gem_specs.find{ |spec| spec.name == "rails" }&.version)
+      @rails_version ||= Gem::Version.new(gem_specs.find { |spec| spec.name == "rails" }&.version)
     end
   end
 end
