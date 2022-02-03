@@ -5,7 +5,7 @@ module Spektr
         super
         @name = "Arbitrary code execution"
         @type = "Remote Code Execution"
-        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
+        @targets = ["Spektr::Targets::Base", "Spektr::Targets::Model", "Spektr::Targets::Controller", "Spektr::Targets::Routes", "Spektr::Targets::View"]
       end
 
       def run
