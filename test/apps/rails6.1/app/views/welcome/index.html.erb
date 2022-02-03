@@ -1,26 +1,19 @@
 <h1>Welcome#index</h1>
 <p>Find me in app/views/welcome/index.html.erb</p>
 <%= content_tag :div, @welcome_message %>
-
-<%= content_tag :div, @welcome_message, @attr => "foobar" %>
 <%= content_tag :div, @welcome_message, @safe_attr => "foobar" %>
-
-<!-- xss -->
-<%== params[:foobar] %>
+<%= "/users/#{current_user.id}/messages.json".inspect.html_safe %>
 <%== @safe_attr %>
+<%= @post.title %>
+<%= @safe_attr.html_safe %>
+<!-- xss -->
+<%= content_tag :div, @welcome_message, @attr => "foobar" %>
+<%== params[:foobar] %>
 <%== @attr %>
-
-
 <%== params[:foobar].html_safe %>
 <%= params[:foobar].html_safe %>
 <%= @attr.html_safe %>
-<%= @safe_attr.html_safe %>
-
 <%= @post.title.html_safe %>
-<%= @post.title %>
 <%== @post.title %>
-
-<%= "/users/#{current_user.id}/messages.json".inspect.html_safe %>
-
 <%= raw cookies[:font] %>
 

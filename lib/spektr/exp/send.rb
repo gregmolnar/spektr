@@ -30,30 +30,62 @@ module Spektr
       end
     end
 
-    class Argument
+    class Argument < Base
       attr_accessor :name, :type, :ast, :children
+
       def initialize(ast)
+        @name = nil
+        process_ast(ast)
         if ast.type == :begin
           ast = ast.children.first
         end
         @ast = ast
         argument = if [:xstr, :hash].include? ast.type
-                    ast
-                  elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
-                    ast.children.first.children.first
-                  elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node)
-                    ast.children.first
-                  else
-                    ast
-                  end
+            ast
+          elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
+            ast.children.first.children.first
+          elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node)
+            ast.children.first
+          else
+            ast
+          end
         @type = argument.type
-        @name = argument.children.last
         @children = argument.children
       end
+
+      def process_ast(ast)
+        process(ast)
+      end
+
+      def on_begin(node)
+        process_all(node)
+      end
+
+      def on_send(node)
+        if node.children.first.nil?
+          @name = node.children[1] unless @name
+        else
+          process_all(node) if node.is_a?(Parser::AST::Node)
+        end
+      end
+
+      def on_const(node)
+        if node.children.first.nil?
+          @name = node.children[1] unless @name
+        end
+      end
+
+      def on_str(node)
+        @name = node.children.first unless @name
+      end
+
+      alias on_sym on_str
+      alias on_ivar on_str
     end
 
     class Option
       attr_accessor :name, :key, :value, :type, :value_name, :value_type
+
       def initialize(ast)
         @key = ast.children.first
         @name = ast.children.first.children.last
@@ -67,6 +99,7 @@ module Spektr
 
     class Receiver
       attr_accessor :name, :type, :ast, :expanded, :children
+
       def initialize(ast)
         @children = []
         set_attributes(ast)
@@ -90,7 +123,6 @@ module Spektr
           @name = @ast.children.last
         end
       end
-
 
       def expand!(ast, tree = [])
         if ast.is_a?(Parser::AST::Node) && ast.children.any?

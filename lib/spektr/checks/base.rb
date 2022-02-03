@@ -1,6 +1,7 @@
 module Spektr
   class Checks::Base
     attr_accessor :name
+
     def initialize(app, target)
       @app = app
       @target = target
@@ -9,7 +10,7 @@ module Spektr
 
     def run
       ::Spektr.logger.debug "Running #{self.class.name} on #{@target.path}"
-      return target_affected? && should_run?
+      target_affected? && should_run?
     end
 
     def target_affected?
@@ -28,44 +29,44 @@ module Spektr
       full_path = target.is_a?(String) ? target : target.path
       path = full_path.gsub(@app.root, "")
       return if dupe?(path, location, message)
+
       @app.warnings << Warning.new(path, full_path, check, location, message, confidence)
     end
 
     def dupe?(path, location, message)
       @app.warnings.find do |w|
         w.path == path &&
-        (w.location.nil? || w.location&.line == location&.line) &&
-        w.message == message
+          (w.location.nil? || w.location&.line == location&.line) &&
+          w.message == message
       end
     end
 
-    def version_affected
-    end
+    def version_affected; end
 
     def user_input?(type, name, ast = nil, object = nil)
       case type
       when :ivar, :lvar
         # TODO: handle helpers here too
-        return false unless @target.class.name == "Spektr::Targets::View"
+        return false unless @target.instance_of?(Spektr::Targets::View)
+
         actions = []
         @app.controllers.each do |controller|
-          actions = actions.concat controller.actions.select{ |action|
+          actions = actions.concat controller.actions.select { |action|
             action.template == @target.view_path
           }
         end
         actions.each do |action|
           action.body.each do |exp|
-            if exp.is_a?(Exp::Ivasign) && exp.name == name
-              return exp.user_input?
-            end
+            return exp.user_input? if exp.is_a?(Exp::Ivasign) && exp.name == name
           end
         end
+        false
       when :send
         if ast.children.first&.type == :send
           child = ast.children.first
           return user_input?(child.type, child.children.last, child)
         end
-        return true if [:params, :cookies, :request].include? name
+        return true if %i[params cookies request].include? name
       when :xstr, :begin
         ast.children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
@@ -74,9 +75,11 @@ module Spektr
       when :dstr
         object&.children&.each do |child|
           if child.is_a?(Parser::AST::Node)
-            name, ast = nil, child
+            name = nil
+            ast = child
           else
-            name, ast = child.name, child.ast
+            name = child.name
+            ast = child.ast
           end
           return true if user_input?(child.type, name, ast)
         end
@@ -106,15 +109,13 @@ module Spektr
         if ["Spektr::Targets::Controller", "Spektr::Targets::View"].include?(@target.class.name)
           actions = []
           @app.controllers.each do |controller|
-            actions = actions.concat controller.actions.select{ |action|
+            actions = actions.concat controller.actions.select { |action|
               action.template == @target.view_path if @target.respond_to? :view_path
             }
           end
           actions.each do |action|
             action.body.each do |exp|
-              if exp.is_a?(Exp::Ivasign) && exp.name == item.name
-                return exp.user_input?
-              end
+              return exp.user_input? if exp.is_a?(Exp::Ivasign) && exp.name == item.name
             end
           end
         end

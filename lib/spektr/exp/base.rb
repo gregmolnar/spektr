@@ -16,6 +16,17 @@ module Spektr
       def send?
         is_a? Send
       end
+
+      include AST::Processor::Mixin
+
+      def process(ast)
+        return unless ast.respond_to?(:to_ast)
+        super
+      end
+
+      def handler_missing(node)
+        # puts "handler missing for #{node.type}"
+      end
     end
   end
 end

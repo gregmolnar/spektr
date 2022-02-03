@@ -1,7 +1,6 @@
 require "test_helper"
 
 class XssTest < Minitest::Test
-
   def setup
     @app = Spektr::App.new(root: RAILS_6_1_ROOT, checks: [Spektr::Checks::Xss])
   end

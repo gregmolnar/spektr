@@ -13,17 +13,16 @@ module Spektr
         @name = processor.name
         @name = @path.split("/").last if @name.blank?
 
-
         @current_method_type = :public
         @parent = processor.parent_name
       end
 
       def find_calls(name, receiver = nil)
-        calls = find(:send, name, @ast).map{ |ast| Exp::Send.new(ast) }
+        calls = find(:send, name, @ast).map { |ast| Exp::Send.new(ast) }
         if receiver
-          calls.select!{ |call| call.receiver&.expanded == receiver }
+          calls.select! { |call| call.receiver&.expanded == receiver }
         elsif receiver == false
-          calls.select!{ |call| call.receiver == nil }
+          calls.select! { |call| call.receiver == nil }
         end
         calls
       end
@@ -31,7 +30,10 @@ module Spektr
       def find_calls_with_block(name, receiver = nil)
         blocks = find(:block, nil, @ast)
         calls = blocks.inject([]) do |memo, block|
-          memo.concat find_calls(name)
+          if block.children.first.children[1] == name
+            result = find(:send, name, block).map { |ast| Exp::Send.new(ast) }
+            memo << result.first
+          end
           memo
         end
         calls
@@ -42,7 +44,7 @@ module Spektr
       end
 
       def find_xstr
-        find(:xstr, nil, @ast).map{ |ast| Exp::Xstr.new(ast) }
+        find(:xstr, nil, @ast).map { |ast| Exp::Xstr.new(ast) }
       end
 
       def find(type, name, ast, result = [])
@@ -54,7 +56,7 @@ module Spektr
           name_index = 1
         end
         if node_matches?(ast.type, ast.children[name_index], type, name)
-            result << ast
+          result << ast
         elsif ast.children.any?
           ast.children.each do |child|
             result = find(type, name, child, result)
@@ -82,7 +84,7 @@ module Spektr
           @current_method_type = ast.children.last
         end
         if ast.type == :def && (type == :all || type == @current_method_type)
-            result << ast
+          result << ast
         elsif ast.children.any?
           ast.children.map do |child|
             result = find_methods(ast: child, result: result, type: type)

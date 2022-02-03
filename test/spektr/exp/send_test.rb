@@ -61,6 +61,36 @@ describe Spektr::Exp::Send do
       assert_equal :send, _send.arguments.first.type
       assert_equal :params, _send.arguments.first.name
     end
+
+    it "handles method argument" do
+      code = <<-CODE
+        create_with(process_params(params[:foo].slice))
+      CODE
+      ast = Parser::CurrentRuby.parse(code)
+      _send = Spektr::Exp::Send.new(ast)
+      assert_equal :send, _send.arguments.first.type
+      assert_equal :process_params, _send.arguments.first.name
+    end
+
+    it "handles argument with assignment" do
+      code = <<-CODE
+        ActiveSupport::JSON.backend = JSONGem
+      CODE
+      ast = Parser::CurrentRuby.parse(code)
+      _send = Spektr::Exp::Send.new(ast)
+      assert_equal :const, _send.arguments.first.type
+      assert_equal :JSONGem, _send.arguments.first.name
+    end
+
+    it "handles instance variable as argument" do
+      code = <<-CODE
+        @safe_attr
+      CODE
+      ast = Parser::CurrentRuby.parse(code)
+      argument = Spektr::Exp::Argument.new(ast)
+      assert_equal :ivar, argument.type
+      assert_equal :@safe_attr, argument.name
+    end
   end
 
   describe "with no options" do
