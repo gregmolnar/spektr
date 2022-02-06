@@ -42,7 +42,7 @@ module Spektr
         Targets::Routes.new(path, File.read(path))
       end.reject(&:nil?)
       # todo load non-app lib too
-      @lib_files = find_files("*").map do |path|
+      @lib_files = find_files("lib").map do |path|
         next if loaded_files.include?(path)
         Targets::Base.new(path, File.read(path))
       end.reject(&:nil?)
