@@ -13,7 +13,7 @@ module Spektr
       end
 
       def find_actions
-        @actions = find_methods(ast: @ast, type: :public ).map do |ast|
+        @actions = find_methods(ast: @ast, type: :public).map do |ast|
           Action.new(ast, self)
         end
       end
@@ -21,7 +21,7 @@ module Spektr
       def find_parent(controllers)
         parent_name = parent
         while true
-          result = controllers.find{|c| c.name == parent_name }
+          result = controllers.find { |c| c.name == parent_name }
           break if result
           split = parent_name.split("::")
           split.shift
@@ -34,11 +34,13 @@ module Spektr
 
       class Action < Spektr::Exp::Definition
         attr_accessor :controller, :template
+
         def initialize(ast, controller)
           super(ast)
+          @template = nil
           split = []
           if controller.parent
-            split = controller.parent.split("::").map{|e| e.delete_suffix("Controller")}.map(&:downcase)
+            split = controller.parent.split("::").map { |e| e.delete_suffix("Controller") }.map(&:downcase)
             if split.size > 1
               split.pop
               @template = "#{split.join("/")}/#{@template}"

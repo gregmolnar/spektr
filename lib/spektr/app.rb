@@ -130,7 +130,7 @@ module Spektr
     end
 
     def gem_specs
-      return unless File.exists? "#{@root}/Gemfile.lock"
+      return unless File.exist? "#{@root}/Gemfile.lock"
       @gem_specs ||= Bundler::LockfileParser.new(Bundler.read_file("#{@root}/Gemfile.lock")).specs
     end
 
