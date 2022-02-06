@@ -1,7 +1,6 @@
 module Spektr
   class Checks
     class JsonParsing < Base
-
       def initialize(app, target)
         super
         @name = "JSON parsing vulnerability"
@@ -33,7 +32,7 @@ module Spektr
 
       def check_cve_2013_0269
         ["json", "json_pure"].each do |gem_name|
-          if g = @app.gem_specs.find{|g| g.name == gem_name }
+          if g = @app.gem_specs&.find { |g| g.name == gem_name }
             if version_between?("1.7.0", "1.7.6", g.version)
               warn! "Gemfile", self, nil, "Unsafe Object Creation Vulnerability in the #{g.name} gem"
             end

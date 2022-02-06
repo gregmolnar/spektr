@@ -40,9 +40,9 @@ module Spektr
         next unless File.exist? path
         loaded_files << path
         Targets::Routes.new(path, File.read(path))
-      end
+      end.reject(&:nil?)
       # todo load non-app lib too
-      @lib_files = find_files("app/**/").map do |path|
+      @lib_files = find_files("*").map do |path|
         next if loaded_files.include?(path)
         Targets::Base.new(path, File.read(path))
       end.reject(&:nil?)
@@ -66,8 +66,11 @@ module Spektr
         @initializers.each do |i|
           check.new(self, i).run
         end if @initializers
+        @lib_files.each do |i|
+          check.new(self, i).run
+        end if @lib_files
 
-        check.new(self, @production_config).run
+        check.new(self, @production_config).run if @production_config
       end
       self
     end
@@ -127,14 +130,17 @@ module Spektr
     end
 
     def gem_specs
+      return unless File.exists? "#{@root}/Gemfile.lock"
       @gem_specs ||= Bundler::LockfileParser.new(Bundler.read_file("#{@root}/Gemfile.lock")).specs
     end
 
     def has_gem?(name)
+      return false unless gem_specs
       gem_specs.any? { |spec| spec.name == name }
     end
 
     def rails_version
+      return unless gem_specs
       @rails_version ||= Gem::Version.new(gem_specs.find { |spec| spec.name == "rails" }&.version)
     end
   end
