@@ -14,12 +14,10 @@ loader.collapse("#{__dir__}/processors")
 loader.setup # ready!
 loader.eager_load
 
-
-
 module Spektr
   class Error < StandardError; end
 
-  def self.run(root = nil, output_format = "terminal", debug = false, checks = [])
+  def self.run(root = nil, output_format = "terminal", debug = false, checks = nil)
     @log_level = debug ? Logger::DEBUG : Logger::WARN
     checks = Checks.load(checks)
     root = "./" if root.nil?
@@ -31,9 +29,9 @@ module Spektr
 
   def self.logger
     @logger ||= begin
-      logger = Logger.new(STDOUT)
-      logger.level = @log_level || Logger::WARN
-      logger
-    end
+        logger = Logger.new(STDOUT)
+        logger.level = @log_level || Logger::WARN
+        logger
+      end
   end
 end
