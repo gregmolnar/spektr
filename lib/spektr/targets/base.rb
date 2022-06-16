@@ -4,6 +4,7 @@ module Spektr
       attr_accessor :path, :name, :options, :ast, :parent
 
       def initialize(path, content)
+        Spektr.logger.debug "loading #{path}"
         @ast = Spektr::App.parser.parse(content)
         @path = path
         return unless @ast
@@ -11,7 +12,7 @@ module Spektr
         processor = Spektr::Processors::Base.new
         processor.process(@ast)
         @name = processor.name
-        @name = @path.split("/").last if @name.blank?
+        @name = @path.split('/').last if @name.blank?
 
         @current_method_type = :public
         @parent = processor.parent_name
@@ -22,21 +23,19 @@ module Spektr
         if receiver
           calls.select! { |call| call.receiver&.expanded == receiver }
         elsif receiver == false
-          calls.select! { |call| call.receiver == nil }
+          calls.select! { |call| call.receiver.nil? }
         end
         calls
       end
 
-      def find_calls_with_block(name, receiver = nil)
+      def find_calls_with_block(name, _receiver = nil)
         blocks = find(:block, nil, @ast)
-        calls = blocks.inject([]) do |memo, block|
+        blocks.each_with_object([]) do |block, memo|
           if block.children.first.children[1] == name
             result = find(:send, name, block).map { |ast| Exp::Send.new(ast) }
             memo << result.first
           end
-          memo
         end
-        calls
       end
 
       def find_method(name)
@@ -49,12 +48,13 @@ module Spektr
 
       def find(type, name, ast, result = [])
         return result unless ast.is_a? Parser::AST::Node
-        case type
-        when :def
-          name_index = 0
-        else
-          name_index = 1
-        end
+
+        name_index = case type
+                     when :def
+                       0
+                     else
+                       1
+                     end
         if node_matches?(ast.type, ast.children[name_index], type, name)
           result << ast
         elsif ast.children.any?
@@ -79,11 +79,12 @@ module Spektr
       end
 
       def find_methods(ast:, result: [], type: :all)
-        return result unless Parser::AST::Node === ast
-        if ast.type == :send && [:private, :public, :protected].include?(ast.children.last)
+        return result unless ast.is_a?(Parser::AST::Node)
+
+        if ast.type == :send && %i[private public protected].include?(ast.children.last)
           @current_method_type = ast.children.last
         end
-        if ast.type == :def && (type == :all || type == @current_method_type)
+        if ast.type == :def && [:all, @current_method_type].include?(type)
           result << ast
         elsif ast.children.any?
           ast.children.map do |child|
