@@ -4,7 +4,7 @@ module Spektr
       attr_accessor :path, :name, :options, :ast, :parent
 
       def initialize(path, content)
-        @ast = Parser::CurrentRuby.parse(content)
+        @ast = Spektr::App.parser.parse(content)
         @path = path
         return unless @ast
 

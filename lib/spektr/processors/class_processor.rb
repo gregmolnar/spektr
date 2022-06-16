@@ -5,10 +5,6 @@ module Spektr
 
       attr_accessor :data
 
-      # def process(code)
-      #   ast = Parser::CurrentRuby.parse(code)
-      #   super(ast)
-      # end
       def on_begin(node)
       end
 

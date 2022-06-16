@@ -11,9 +11,9 @@ module Spektr
           @view_path = match_data[1]
         end
         begin
-          @ast = Parser::CurrentRuby.parse(source(content))
+          @ast = Spektr::App.parser.parse(source(content))
         rescue Parser::SyntaxError => e
-          @ast = Parser::CurrentRuby.parse("")
+          @ast = Spektr::App.parser.parse("")
           ::Spektr.logger.error "Parser::SyntaxError when parsing #{@view_path}: #{e.message}"
         end
         @name = @view_path #@ast.children.first.children.last.to_s
