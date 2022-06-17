@@ -157,6 +157,7 @@ module Spektr
       end
 
       @json_output[:summary] = []
+      @json_output[:checks] = @checks.collect(&:name)
 
       @json_output[:advisories].group_by { |a| a[:name] }.each do |n, i|
         @json_output[:summary] << {
