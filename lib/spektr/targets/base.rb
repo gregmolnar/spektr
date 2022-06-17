@@ -104,12 +104,14 @@ module Spektr
           Exp::Ivasgin.new(ast)
         when :lvasign
           Exp::Lvasign.new(ast)
+        when :const
+          Exp::Const.new(ast)
         when :xstr
           Exp::Xstr.new(ast)
-        when :sym, :int
+        when :sym, :int, :str
           Exp::Base.new(ast)
         else
-          raise "Unknown type #{ast.type}"
+          raise "Unknown type #{ast.type} #{ast.inspect}"
         end
       end
     end
