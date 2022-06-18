@@ -152,7 +152,8 @@ module Spektr
           description: warning.message,
           path: warning.path,
           location: warning.location&.line,
-          line: warning.line
+          line: warning.line,
+          check: warning.check.class.name
         }
       end
 
