@@ -11,11 +11,11 @@ module Spektr::Processors
     end
 
     def name
-      @name_parts.join("::")
+      @name_parts.join('::')
     end
 
     def parent_name
-      @modules.concat(@parent_parts).join("::")
+      @parent_parts.join('::')
     end
 
     def on_begin(node)
@@ -55,8 +55,7 @@ module Spektr::Processors
       parts
     end
 
-    def on_const(node)
-    end
+    def on_const(node); end
 
     def handler_missing(node)
       # puts "handler missing for #{node.type}"
