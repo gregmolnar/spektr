@@ -4,7 +4,7 @@ module Spektr
                   :production_config, :gem_specs, :ruby_version
 
     def self.parser
-      @@parser
+      @@parser ||= Parser::CurrentRuby
     end
 
     def initialize(checks:, root: './')
