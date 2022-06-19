@@ -1,7 +1,7 @@
 module Spektr
   module Targets
     class Base
-      attr_accessor :path, :name, :options, :ast, :parent
+      attr_accessor :path, :name, :options, :ast, :parent, :processor
 
       def initialize(path, content)
         Spektr.logger.debug "loading #{path}"
@@ -9,13 +9,13 @@ module Spektr
         @path = path
         return unless @ast
 
-        processor = Spektr::Processors::Base.new
-        processor.process(@ast)
-        @name = processor.name
+        @processor = Spektr::Processors::Base.new
+        @processor.process(@ast)
+        @name = @processor.name
         @name = @path.split('/').last if @name.blank?
 
         @current_method_type = :public
-        @parent = processor.parent_name
+        @parent = @processor.parent_name
       end
 
       def find_calls(name, receiver = nil)
