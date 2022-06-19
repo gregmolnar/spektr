@@ -19,18 +19,24 @@ module Spektr
       end
 
       def find_parent(controllers)
-        parent_name = parent
+        parent_name = @processor.parent_name
+        result = find_in_set(parent_name, controllers)
+        result = find_in_set(processor.parent_name_with_modules, controllers)
+        return nil if result&.name == name
+
+        result
+      end
+
+      def find_in_set(name, set)
         while true
-          result = controllers.find { |c| c.name == parent_name }
+          result = set.find { |c| c.name == name }
           break if result
 
-          split = parent_name.split('::')
+          split = name.split('::')
           split.shift
-          parent_name = split.join('::')
-          break if parent_name.blank?
+          name = split.join('::')
+          break if name.blank?
         end
-        # return nil if result&.name == name
-
         result
       end
 
