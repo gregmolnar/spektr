@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Ruby CI
+name: CI
 
 on:
   push:
@@ -15,14 +15,17 @@ jobs:
   test:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [2.7, 3.0, 3.1]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Ruby
         uses: ruby/setup-ruby@477b21f02be01bcb8030d50f37cfec92bfa615b6
         with:
           bundler-cache: true
-          ruby-version: 2.6
+          ruby-version: ${{ matrix.ruby }}
       - name: Install dependencies
         run: bundle install
       - name: Run tests
