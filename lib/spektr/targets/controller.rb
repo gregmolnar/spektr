@@ -21,7 +21,7 @@ module Spektr
       def find_parent(controllers)
         parent_name = @processor.parent_name
         result = find_in_set(parent_name, controllers)
-        result = find_in_set(processor.parent_name_with_modules, controllers)
+        result ||= find_in_set(processor.parent_name_with_modules, controllers)
         return nil if result&.name == name
 
         result

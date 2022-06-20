@@ -25,7 +25,7 @@ module Spektr
 
         if @target.find_calls(:protect_from_forgery).none? || (enabled && @target.find_calls(:skip_forgery_protection).any?)
           skip = @target.find_calls(:skip_forgery_protection).last
-          return if skip && skip.options.keys.intersection(%i[only except]).any?
+          return if enabled && skip && skip.options.keys.intersection(%i[only except]).any?
 
           warn! @target, self, nil, 'protect_from_forgery should be enabled'
         end
