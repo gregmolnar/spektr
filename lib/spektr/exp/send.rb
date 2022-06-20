@@ -6,14 +6,15 @@ module Spektr
       def initialize(ast)
         super
         @receiver = Receiver.new(ast.children[0]) if ast.children[0]
-        if ast.children.first.is_a?(Parser::AST::Node)
-          @name = ast.children.first.children.last
-        else
-          @name = ast.children[1]
-        end
+        @name = if ast.children.first.is_a?(Parser::AST::Node)
+                  ast.children.first.children.last
+                else
+                  ast.children[1]
+                end
         children = ast.children[2..]
         children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
+
           case child.type
           when :hash
             if children.size == 1 || children.last == child
@@ -36,19 +37,17 @@ module Spektr
       def initialize(ast)
         @name = nil
         process_ast(ast)
-        if ast.type == :begin
-          ast = ast.children.first
-        end
+        ast = ast.children.first if ast.type == :begin
         @ast = ast
-        argument = if [:xstr, :hash].include? ast.type
-            ast
-          elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
-            ast.children.first.children.first
-          elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node)
-            ast.children.first
-          else
-            ast
-          end
+        argument = if %i[xstr hash].include? ast.type
+                     ast
+                   elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node) && ast.children.first.children.first.is_a?(Parser::AST::Node)
+                     ast.children.first.children.first
+                   elsif ast.type != :dstr && ast.children.first.is_a?(Parser::AST::Node)
+                     ast.children.first
+                   else
+                     ast
+                   end
         @type = argument.type
         @children = argument.children
       end
@@ -63,20 +62,18 @@ module Spektr
 
       def on_send(node)
         if node.children.first.nil?
-          @name = node.children[1] unless @name
-        else
-          process_all(node) if node.is_a?(Parser::AST::Node)
+          @name ||= node.children[1]
+        elsif node.is_a?(Parser::AST::Node)
+          process_all(node)
         end
       end
 
       def on_const(node)
-        if node.children.first.nil?
-          @name = node.children[1] unless @name
-        end
+        @name ||= node.children[1] if node.children.first.nil?
       end
 
       def on_str(node)
-        @name = node.children.first unless @name
+        @name ||= node.children.first
       end
 
       alias on_sym on_str
@@ -109,6 +106,7 @@ module Spektr
         if [:begin].include?(ast.type) && ast.children[0].is_a?(Parser::AST::Node)
           return set_attributes(ast.children[0])
         end
+
         @ast = ast
         if ast.type == :dstr
           @type = :dstr
@@ -118,7 +116,7 @@ module Spektr
           end
         else
           @expanded = expand!(ast)
-          (ast.type == :send && ast.children[0].is_a?(Parser::AST::Node)) ? @ast = ast.children[0] : @ast = ast
+          @ast = ast.type == :send && ast.children[0].is_a?(Parser::AST::Node) ? ast.children[0] : ast
           @type = @ast.type
           @name = @ast.children.last
         end
@@ -129,7 +127,7 @@ module Spektr
           tree << ast.children.last
           expand!(ast.children.first, tree)
         else
-          tree.reverse.join(".")
+          tree.reverse.join('.')
         end
       end
     end

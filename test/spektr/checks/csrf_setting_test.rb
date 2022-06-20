@@ -129,4 +129,24 @@ class CsrfSettingTest < Minitest::Test
     check.run
     assert_equal 1, app.warnings.size
   end
+
+  def test_it_does_not_fails_when_skips_protection_with_only_or_except
+    application_controller = <<-CODE
+      class ApplicationController
+        protect_from_forgery
+      end
+    CODE
+    code = <<-CODE
+     class PostsController < ApplicationController
+       skip_forgery_protection only: [:create]
+     end
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
+    app.rails_version = Gem::Version.new('4.0.0')
+    app.controllers = [Spektr::Targets::Controller.new('application_controller.rb', application_controller)]
+    controller = Spektr::Targets::Controller.new('posts_controller.rb', code)
+    check = Spektr::Checks::CsrfSetting.new(app, controller)
+    check.run
+    assert_equal 0, app.warnings.size
+  end
 end

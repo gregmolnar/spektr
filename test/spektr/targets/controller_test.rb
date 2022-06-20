@@ -99,13 +99,15 @@ class ControllerTest < Minitest::Test
     code = <<-CODE
     module Api
       module V0
-        class OrganizationsController < ApiController
+        module Admin
+          class OrganizationsController < ApiController
+          end
         end
       end
     end
     CODE
-    controller = Spektr::Targets::Controller.new('api/v0/organisations_controller.rb', code)
-    assert_equal 'Api::V0::ApiController', controller.processor.parent_name_with_modules
+    controller = Spektr::Targets::Controller.new('api/v0/admin/organisations_controller.rb', code)
+    assert_equal 'Api::V0::Admin::ApiController', controller.processor.parent_name_with_modules
 
     code = <<-CODE
     module Admin
