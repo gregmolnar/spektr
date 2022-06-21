@@ -82,7 +82,7 @@ module Spektr
       table = TTY::Table.new(summary, padding: [2, 2, 2, 2])
       puts table.render(:basic)
       puts "\n\n"
-
+      exit 1 if json[:advisories].any?
     else
       puts 'Unknown format'
     end
