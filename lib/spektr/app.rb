@@ -1,6 +1,6 @@
 module Spektr
   class App
-    attr_accessor :root, :checks, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version,
+    attr_accessor :root, :checks, :initializers, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version,
                   :production_config, :gem_specs, :ruby_version
 
     def self.parser
@@ -137,7 +137,7 @@ module Spektr
       self
     end
 
-    def report(format = 'terminal')
+    def report(_format = 'terminal')
       @json_output[:app][:rails_version] = @rails_version
       @json_output[:app][:initializers] = @initializers.size
       @json_output[:app][:controllers] = @controllers.size
@@ -165,12 +165,7 @@ module Spektr
           n => i.size
         }
       end
-      case format
-      when 'json'
-        @json_output
-      when 'terminal'
-        'Hold my beer'
-      end
+      @json_output
     end
 
     def initializer_paths
