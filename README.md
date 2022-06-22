@@ -41,6 +41,11 @@ To see the available options, you can run `spektr --help`.
 
 ![Railgoat example](https://github.com/gregmolnar/spektr/blob/master/railsgoat-example.png)
 
+### False positives
+
+Due to the nature of static-code analysis, Spektr might report false positives. Please report them, so I can try
+to tweak the check.
+
 
 ## Development
 
