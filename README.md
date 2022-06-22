@@ -34,6 +34,13 @@ If you want to scan an app in another folder:
 spektr path/to/app
 ```
 
+To see the available options, you can run `spektr --help`.
+
+
+### Railsgoat Example output
+
+![Railgoat example](https://github.com/gregmolnar/spektr/blob/master/railsgoat-example.png)
+
 
 ## Development
 
