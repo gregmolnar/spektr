@@ -61,6 +61,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/gregmo
 ## License
 
 The gem is available as open source under the terms described in the [licence](https://github.com/gregmolnar/spektr/blob/master/licence.txt). Non-commercial use is free of charge, to obtain a commercial licence, contact us at info[at]spektrhq.com.
+If you are looking for a hosted solution, take a look at [SpektrHQ](https://spektrhq.com).
 
 
 ## Code of Conduct
