@@ -1,4 +1,5 @@
-require 'spektr/version'
+# frozen_string_literal: true
+
 require 'bundler'
 require 'parser'
 require 'parser/current'
@@ -13,8 +14,7 @@ require 'tty/table'
 require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.collapse("#{__dir__}/processors")
-loader.setup # ready!
-loader.eager_load
+loader.setup
 
 module Spektr
   class Error < StandardError; end
@@ -112,7 +112,7 @@ module Spektr
 
   def self.logger
     @logger ||= begin
-      logger = Logger.new(STDOUT)
+      logger = Logger.new($stdout)
       logger.level = @log_level || Logger::WARN
       logger
     end
