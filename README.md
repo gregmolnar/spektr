@@ -60,7 +60,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/gregmo
 
 ## License
 
-The gem is available as open source under the terms described in the [licence](https://github.com/gregmolnar/spektr/blob/master/licence.txt). Non-commercial use is free of charge, to obtain a commercial licence, contact us at info[at]spektrhq.com.
+The gem is available as open source under the terms described in the [licence](https://github.com/gregmolnar/spektr/blob/master/LICENSE.txt). Non-commercial use is free of charge, to obtain a commercial licence, contact us at info[at]spektrhq.com.
 If you are looking for a hosted solution, take a look at [SpektrHQ](https://spektrhq.com).
 
 
@@ -76,7 +76,7 @@ Yes, this is perfectly fine without obtaining a licence. You can however donate 
 
 ### I want to use Spektr in my automated code analyser SaaS, do I need a commercial licence?
 
-Yes, plese get in touch at info[at]spektrhq.com and we will work something out.
+Yes, please get in touch at info[at]spektrhq.com and we will work something out.
 
 ### I am a penetration tester and I'd like to use Spektr to audit on a paid engagement. Do I need a commercial licence?
 
