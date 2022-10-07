@@ -1,7 +1,7 @@
 module Spektr
   module Targets
     class View < Base
-      TEMPLATE_EXTENSIONS = /.*\.(erb|rhtml|haml)$/
+      TEMPLATE_EXTENSIONS = /.*\.(erb|rhtml|haml|slim)$/
       attr_accessor :view_path
 
       def initialize(path, content)
@@ -27,6 +27,9 @@ module Spektr
           Erubi.new(content, trim_mode: '-').src
         when :haml
           Haml::Engine.new(content).precompiled
+        when :slim
+          erb = Slim::ERBConverter.new.call(content)
+          Erubi.new(erb, trim_mode: '-').src
         end
       end
     end

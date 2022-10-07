@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'parser', '~> 3.0.0'
   spec.add_dependency 'pastel'
   spec.add_dependency 'ruby_parser', '~>3.13'
+  spec.add_dependency 'slim'
   spec.add_dependency 'tty-color'
   spec.add_dependency 'tty-option'
   spec.add_dependency 'tty-spinner'
