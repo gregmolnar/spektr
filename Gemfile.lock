@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    spektr (0.1.0)
+    spektr (0.2.0)
       activesupport (~> 6.1.0)
       erubi
       haml (~> 5.1)
