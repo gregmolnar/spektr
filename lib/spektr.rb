@@ -24,23 +24,28 @@ module Spektr
     pastel = Pastel.new
     @output_format = output_format
     start_spinner('Initializing')
-    @log_level = debug ? Logger::DEBUG : Logger::WARN
+    if debug
+      Logger::DEBUG
+    elsif terminal?
+      Logger::ERROR
+    else
+      Logger::WARN
+    end
     checks = Checks.load(checks)
     root = './' if root.nil?
     @app = App.new(checks: checks, root: root)
     stop_spinner
-    puts "\n"
-    puts pastel.bold('Checks:')
-    puts "\n"
-    puts checks.collect(&:name).join(', ')
-    # table = TTY::Table.new([['Checks', checks.collect(&:name).join(', ')]])
-    # puts table.render(:basic)
-    puts "\n"
+    if terminal?
+      puts "\n"
+      puts pastel.bold('Checks:')
+      puts "\n"
+      puts checks.collect(&:name).join(', ')
+      puts "\n"
+    end
 
     start_spinner('Loading files')
     @app.load
     stop_spinner
-    puts "\n"
     table = TTY::Table.new([
                              ['Rails version', @app.rails_version],
                              ['Initializers', @app.initializers.size],
@@ -50,8 +55,11 @@ module Spektr
                              ['Routes', @app.routes.size],
                              ['Lib files', @app.lib_files.size]
                            ])
-    puts table.render(:basic)
-    puts "\n"
+    if terminal?
+      puts "\n"
+      puts table.render(:basic)
+      puts "\n"
+    end
     start_spinner('Scanning files')
     @app.scan!
     stop_spinner
