@@ -7,7 +7,7 @@ module Spektr
       @@parser ||= Parser::CurrentRuby
     end
 
-    def initialize(checks:, ignore:, root: './')
+    def initialize(checks:, ignore: [], root: './')
       @root = root
       @checks = checks
       @controllers = []
@@ -17,7 +17,7 @@ module Spektr
         app: {},
         advisories: []
       }
-      @ignore = ignore || []
+      @ignore = ignore
       @ruby_version = '2.7.1'
       version_file = File.join(root, '.ruby-version')
       @ruby_version = File.read(version_file).lines.first if File.exist?(version_file)
