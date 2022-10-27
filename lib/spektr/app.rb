@@ -7,7 +7,7 @@ module Spektr
       @@parser ||= Parser::CurrentRuby
     end
 
-    def initialize(checks:, root: './')
+    def initialize(checks:, ignore:, root: './')
       @root = root
       @checks = checks
       @controllers = []
@@ -17,6 +17,7 @@ module Spektr
         app: {},
         advisories: []
       }
+      @ignore = ignore || []
       @ruby_version = '2.7.1'
       version_file = File.join(root, '.ruby-version')
       @ruby_version = File.read(version_file).lines.first if File.exist?(version_file)
@@ -137,7 +138,7 @@ module Spektr
       self
     end
 
-    def report(_format = 'terminal')
+    def report
       @json_output[:app][:rails_version] = @rails_version
       @json_output[:app][:initializers] = @initializers.size
       @json_output[:app][:controllers] = @controllers.size
@@ -147,13 +148,16 @@ module Spektr
       @json_output[:app][:lib_files] = @lib_files.size
 
       @warnings.each do |warning|
+        next if @ignore.include?(warning.fingerprint)
+
         @json_output[:advisories] << {
           name: warning.check.name,
           description: warning.message,
           path: warning.path,
           location: warning.location&.line,
           line: warning.line,
-          check: warning.check.class.name
+          check: warning.check.class.name,
+          fingerprint: warning.fingerprint
         }
       end
 

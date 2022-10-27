@@ -36,6 +36,8 @@ spektr path/to/app
 
 To see the available options, you can run `spektr --help`.
 
+To ignore a finding, you can use the `--ignore` flag with a comma separated list of fingerprints from the report.
+
 
 ### Railsgoat Example output
 

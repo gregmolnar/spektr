@@ -20,7 +20,7 @@ loader.setup
 module Spektr
   class Error < StandardError; end
 
-  def self.run(root = nil, output_format = 'terminal', debug = false, checks = nil)
+  def self.run(root = nil, output_format = 'terminal', debug = false, checks = nil, ignore = [])
     pastel = Pastel.new
     @output_format = output_format
     start_spinner('Initializing')
@@ -33,7 +33,7 @@ module Spektr
     end
     checks = Checks.load(checks)
     root = './' if root.nil?
-    @app = App.new(checks: checks, root: root)
+    @app = App.new(checks: checks, root: root, ignore: ignore)
     stop_spinner
     if terminal?
       puts "\n"
@@ -65,6 +65,7 @@ module Spektr
     stop_spinner
     puts "\n"
     json = @app.report
+
     case output_format
     when 'json'
       json
@@ -78,6 +79,7 @@ module Spektr
         puts "#{pastel.green('Path:')} #{advisory[:path]}\n"
         puts "#{pastel.green('Location:')} #{advisory[:location]}\n"
         puts "#{pastel.green('Code:')} #{advisory[:line]}\n"
+        puts "#{pastel.green('Fingerprint:')} #{advisory[:fingerprint]}\n"
         puts "\n"
         puts "\n"
       end

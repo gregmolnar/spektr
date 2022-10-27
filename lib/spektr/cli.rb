@@ -25,6 +25,11 @@ module Spektr
       desc 'run this single check'
     end
 
+    flag :ignore do
+      long '--ignore string'
+      desc 'comma separated list of fingerprints to ignore'
+    end
+
     flag :debug do
       long '--debug'
       short '-d'
@@ -42,7 +47,8 @@ module Spektr
         print help
         exit
       else
-        report = Spektr.run(params[:root], params[:output_format], params[:debug], params[:check])
+        ignore = params[:ignore] ? params[:ignore].split(',') : []
+        report = Spektr.run(params[:root], params[:output_format], params[:debug], params[:check], ignore)
         case params[:output_format]
         when 'json'
           puts JSON.pretty_generate report
