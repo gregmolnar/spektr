@@ -3,7 +3,6 @@
 require 'bundler'
 require 'parser'
 require 'parser/current'
-require 'unparser'
 require 'erb'
 require 'haml'
 require 'logger'
