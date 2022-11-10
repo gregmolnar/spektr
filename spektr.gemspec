@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'erubi'
-  spec.add_dependency 'haml', '~>5.1'
+  spec.add_dependency 'haml'
   spec.add_dependency 'parser', '~> 3.0.0'
   spec.add_dependency 'pastel'
   spec.add_dependency 'ruby_parser', '~>3.13'
