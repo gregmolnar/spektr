@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 0.3.2
+
+* Rescue from lib file parsing errors
+
+* Drop Active Support from dependencies
+
+* Improve Gemspec
+
 ## 0.3.0
 
 * Add support to ignore findings
