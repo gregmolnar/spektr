@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport', '> 6.1.0'
   spec.add_dependency 'erubi'
   spec.add_dependency 'haml', '~>5.1'
   spec.add_dependency 'parser', '~> 3.0.0'
