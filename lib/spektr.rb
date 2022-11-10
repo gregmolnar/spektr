@@ -6,11 +6,10 @@ require 'parser/current'
 require 'unparser'
 require 'erb'
 require 'haml'
-require 'active_support/core_ext/string/inflections'
 require 'logger'
 require 'tty/spinner'
 require 'tty/table'
-
+require 'spektr/core_ext/string'
 require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.collapse("#{__dir__}/processors")
