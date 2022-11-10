@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.3.4
+
+* Relax dependencies, to help with using spektr as a gem
+* Fix executable
+
 ## 0.3.3
 
 * Remove hard dependency of haml 5
