@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.3.3
+
+* Remove hard dependency of haml 5
+
 ## 0.3.2
 
 * Rescue from lib file parsing errors
