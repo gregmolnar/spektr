@@ -17,7 +17,6 @@ module Spektr
       end
 
       def on_class(node)
-        debugger
         puts "on class2: #{node.inspect}"
       end
     end

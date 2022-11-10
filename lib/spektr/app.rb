@@ -94,8 +94,12 @@ module Spektr
       # TODO: load non-app lib too
       @lib_files = find_files('lib').map do |path|
         next if loaded_files.include?(path)
-
-        Targets::Base.new(path, File.read(path, encoding: 'utf-8'))
+        begin
+          Targets::Base.new(path, File.read(path, encoding: 'utf-8'))
+        rescue Parser::SyntaxError => e
+          ::Spektr.logger.debug "Couldn't parse #{path}: #{e.message}"
+          nil
+        end
       end.reject(&:nil?)
       self
     end
