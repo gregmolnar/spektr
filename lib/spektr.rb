@@ -21,7 +21,7 @@ module Spektr
     pastel = Pastel.new
     @output_format = output_format
     start_spinner('Initializing')
-    if debug
+    @log_level = if debug
       Logger::DEBUG
     elsif terminal?
       Logger::ERROR

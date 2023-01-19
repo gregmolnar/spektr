@@ -16,13 +16,25 @@ module Spektr::Processors
     end
 
     def parent_name
-      @parent_parts.shift if @parent_parts.first.to_s == name
-      @parent_parts.join('::')
+      parent_parts.join('::')
+    end
+
+    def parent_parts
+      result = @parent_parts.dup
+      result.pop if part_matches_self?(result.last.to_s)
+      result
+    end
+
+    def part_matches_self?(part)
+      (part == name || part_with_module(part) == name)
+    end
+
+    def part_with_module(part)
+      (@parent_modules | [part]).join('::')
     end
 
     def parent_name_with_modules
-      parts = @parent_modules | @parent_parts
-      parts.shift if parts.first.to_s == name
+      parts = @parent_modules | parent_parts
       parts.join('::')
     end
 
@@ -39,17 +51,12 @@ module Spektr::Processors
     end
 
     def extract_parent_parts(node)
-      if node.children[1] && node.children[1].is_a?(Parser::AST::Node)
-        node.children[1].children.each do |child|
-          if child.is_a?(Parser::AST::Node)
-            extract_parent_parts(child)
-            @parent_parts << child.children.last
-          elsif child.is_a? Symbol
-            @parent_parts << child.to_s
-          end
+      return unless node.is_a?(Parser::AST::Node) && %i[ module class const send].include?(node.type)
+      @parent_parts.prepend(node.children.last) if node.type == :const
+      if node.children.any?
+        node.children.each do |child|
+          extract_parent_parts(child)
         end
-      elsif node&.children&.first&.children&.last
-        @parent_parts << node.children.first.children.last
       end
     end
 
