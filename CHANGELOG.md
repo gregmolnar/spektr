@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.4.0
+
+* make XSS check work without a Rails version
+* change parent class extraction to support Structs
+* fix parsing errors
+
 ## 0.3.4
 
 * Relax dependencies, to help with using spektr as a gem
