@@ -100,9 +100,9 @@ module Spektr
           Exp::Send.new(ast)
         when :def
           Exp::Definition.new(ast)
-        when :ivasgn
+        when :ivasgn, :ivar
           Exp::Ivasgin.new(ast)
-        when :lvasign
+        when :lvasign, :lvar
           Exp::Lvasign.new(ast)
         when :const
           Exp::Const.new(ast)
