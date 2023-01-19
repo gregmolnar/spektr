@@ -23,6 +23,7 @@ module Spektr
 
       def run
         return unless super
+        return unless @app.rails_version
         calls = @target.find_calls(:content_tag)
         # https://groups.google.com/d/msg/ruby-security-ann/8B2iV2tPRSE/JkjCJkSoCgAJ
         cve_2016_6316_check(calls)
