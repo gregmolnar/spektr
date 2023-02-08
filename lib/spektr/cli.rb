@@ -52,6 +52,7 @@ module Spektr
         case params[:output_format]
         when 'json'
           puts JSON.pretty_generate report
+          exit 1 if report[:advisories].any?
         end
       end
     end
