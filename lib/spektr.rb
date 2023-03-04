@@ -12,6 +12,7 @@ require 'spektr/core_ext/string'
 require 'zeitwerk'
 loader = Zeitwerk::Loader.for_gem
 loader.collapse("#{__dir__}/processors")
+loader.do_not_eager_load("#{__dir__}/spektr/core_ext")
 loader.setup
 
 module Spektr
