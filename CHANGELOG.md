@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.4.1
+
+* fix core extension eager loading
+
 ## 0.4.0
 
 * make XSS check work without a Rails version
