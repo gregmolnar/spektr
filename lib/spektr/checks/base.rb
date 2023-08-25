@@ -132,7 +132,7 @@ module Spektr
         end
       when :dstr
         # TODO: implement this
-      when :sym, :str, :nil, :yield
+      when :sym, :str, :nil, :yield, :args
         # do nothing
       else
         raise "Unknown argument type #{item.type}"
