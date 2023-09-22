@@ -115,6 +115,7 @@ module Spektr
           end
           actions.each do |action|
             action.body.each do |exp|
+              next unless item.respond_to?(:name)
               return exp.user_input? if exp.is_a?(Exp::Ivasign) && exp.name == item.name
             end
           end

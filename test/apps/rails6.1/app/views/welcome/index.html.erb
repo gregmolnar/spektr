@@ -16,4 +16,4 @@
 <%= @post.title.html_safe %>
 <%== @post.title %>
 <%= raw cookies[:font] %>
-
+<%= raw Sensor::NAMES.map{|n| {val: n, text: t(n, scope: "sensors.categories")} } %>
