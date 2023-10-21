@@ -88,12 +88,12 @@ module Spektr
           next unless child.is_a?(Parser::AST::Node)
           return true if user_input?(child.type, child.children.last, child)
         end
-      when :block, :pair, :hash, :array, :if, :or
+      when :block, :pair, :hash, :array, :if, :or, :begin
         ast.children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
           return true if user_input?(child.type, child.children.last, child)
         end
-      when :sym, :str, :const, :int, :cbase, :true, :self, :args, :nil, :yield
+      when :sym, :str, :const, :int, :cbase, :true, :self, :args, :nil, :yield, :super
         # do nothing
       else
         raise "Unknown argument type #{type} #{name} #{ast.inspect}"
@@ -126,14 +126,14 @@ module Spektr
         return true if _send.receiver && model_names.include?(_send.receiver.name)
       when :const
         return true if model_names.include? item.name
-      when :block, :pair, :hash, :array, :if, :or
+      when :block, :pair, :hash, :array, :if, :or, :begin
         item.children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
           return true if model_attribute?(child)
         end
       when :dstr
         # TODO: implement this
-      when :sym, :str, :nil, :yield, :args
+      when :sym, :str, :nil, :yield, :args, super
         # do nothing
       else
         raise "Unknown argument type #{item.type}"
