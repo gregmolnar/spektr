@@ -88,7 +88,7 @@ module Spektr
           next unless child.is_a?(Parser::AST::Node)
           return true if user_input?(child.type, child.children.last, child)
         end
-      when :block, :pair, :hash, :array, :if, :or, :begin
+      when :block, :pair, :hash, :array, :if, :or, :begin, :and
         ast.children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
           return true if user_input?(child.type, child.children.last, child)
@@ -126,7 +126,7 @@ module Spektr
         return true if _send.receiver && model_names.include?(_send.receiver.name)
       when :const
         return true if model_names.include? item.name
-      when :block, :pair, :hash, :array, :if, :or, :begin
+      when :block, :pair, :hash, :array, :if, :or, :begin, :and
         item.children.each do |child|
           next unless child.is_a?(Parser::AST::Node)
           return true if model_attribute?(child)
