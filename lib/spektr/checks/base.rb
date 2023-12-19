@@ -62,7 +62,7 @@ module Spektr
         end
         false
       when :send
-        if ast.children.first&.type == :send
+        if ast && ast.children.first&.type == :send
           child = ast.children.first
           return user_input?(child.type, child.children.last, child)
         end
