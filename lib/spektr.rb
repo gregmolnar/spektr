@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'bundler'
-require 'parser'
-require 'parser/current'
+require 'prism'
 require 'erb'
+require 'herb'
 require 'haml'
 require 'logger'
 require 'tty/spinner'
@@ -23,12 +23,12 @@ module Spektr
     @output_format = output_format
     start_spinner('Initializing')
     @log_level = if debug
-      Logger::DEBUG
-    elsif terminal?
-      Logger::ERROR
-    else
-      Logger::WARN
-    end
+                   Logger::DEBUG
+                 elsif terminal?
+                   Logger::ERROR
+                 else
+                   Logger::WARN
+                 end
     checks = Checks.load(checks)
     root = './' if root.nil?
     @app = App.new(checks: checks, root: root, ignore: ignore)

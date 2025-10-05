@@ -13,7 +13,7 @@ module Spektr
         end
       end
 
-      class Action < Spektr::Exp::Definition
+      class Action
         attr_accessor :controller, :template
         def initialize(ast, controller)
           super(ast)

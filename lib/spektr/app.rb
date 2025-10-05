@@ -3,10 +3,6 @@ module Spektr
     attr_accessor :root, :checks, :initializers, :controllers, :models, :views, :lib_files, :routes, :warnings, :rails_version,
                   :production_config, :gem_specs, :ruby_version
 
-    def self.parser
-      @@parser ||= Parser::CurrentRuby
-    end
-
     def initialize(checks:, ignore: [], root: './')
       @root = root
       @checks = checks
@@ -21,43 +17,6 @@ module Spektr
       @ruby_version = '2.7.1'
       version_file = File.join(root, '.ruby-version')
       @ruby_version = File.read(version_file).lines.first if File.exist?(version_file)
-      case @ruby_version
-      when /^2\.0\./
-        require 'parser/ruby20'
-        @@parser = Parser::Ruby20
-      when /^2\.1\./
-        require 'parser/ruby21'
-        @@parser = Parser::Ruby21
-      when /^2\.2\./
-        require 'parser/ruby22'
-        @@parser = Parser::Ruby22
-      when /^2\.3/
-        require 'parser/ruby23'
-        @@parser = Parser::Ruby23
-      when /^2\.4\./
-        require 'parser/ruby24'
-        @@parser = Parser::Ruby24
-      when /^2\.5\./
-        require 'parser/ruby25'
-        @@parser = Parser::Ruby25
-      when /^2\.6\./
-        require 'parser/ruby26'
-        @@parser = Parser::Ruby26
-      when /^2\.7\./
-        require 'parser/ruby27'
-        @@parser = Parser::Ruby27
-      when /^3\.0\./
-        require 'parser/ruby30'
-        @@parser = Parser::Ruby30
-      when /^3\.1\./
-        require 'parser/ruby31'
-        @@parser = Parser::Ruby31
-      when /^3\.2\./
-        require 'parser/ruby32'
-        @@parser = Parser::Ruby32
-      else
-        @@parser = Parser::CurrentRuby
-      end
     end
 
     def load

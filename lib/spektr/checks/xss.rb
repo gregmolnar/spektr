@@ -15,31 +15,31 @@ module Spektr
         calls = @target.find_calls(:safe_expr_append=)
         calls.concat(@target.find_calls(:raw))
         calls.each do |call|
-          ::Spektr.logger.debug "Checking arguments in #{@target.path} at line #{call.location.line}"
-          call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name, argument.ast)
+          ::Spektr.logger.debug "Checking arguments in #{@target.path} at line #{call.location.start_line}"
+          call.arguments.arguments.each do |argument|
+            if user_input?(argument)
               warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
             end
             if model_attribute?(argument)
-              warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute #{argument.name}"
+              warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute"
             end
           end
         end
         calls.each do |call|
-          ::Spektr.logger.debug "Checking arguments in #{@target.path} at line #{call.location.line}"
-          call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name, argument.ast)
+          ::Spektr.logger.debug "Checking arguments in #{@target.path} at line #{call.location.start_line}"
+          call.arguments.arguments.each do |argument|
+            if user_input?(argument)
               warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
             end
             if model_attribute?(argument)
-              warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute #{argument.name}"
+              warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute"
             end
           end
         end
         calls = @target.find_calls(:html_safe)
         calls.each do |call|
-          ::Spektr.logger.debug "Checking arguments in #{@target.path} at line #{call.location.line}"
-          if user_input?(call.receiver.type, call.receiver.name, call.receiver.ast, call.receiver)
+          ::Spektr.logger.debug "Checking arguments in #{@target.path} at line #{call.location.start_line}"
+          if user_input?(call.receiver)
             warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
           end
           if model_attribute?(call.receiver)

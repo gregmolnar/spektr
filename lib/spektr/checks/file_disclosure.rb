@@ -12,7 +12,7 @@ module Spektr
       def run
         return unless super
         config = @app.production_config.find_calls(:serve_static_assets=).first
-        if config && config.arguments.first.type == :true
+        if config && config.arguments.arguments.first.type == :true_node
           warn! "root", self, nil, "File existence disclosure vulnerability"
         end
       end

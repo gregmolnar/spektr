@@ -12,8 +12,8 @@ module Spektr
         return unless super
         [:send, :try, :__send__, :public_send].each do |method|
           @target.find_calls(method).each do |call|
-            argument = call.arguments.first
-            if user_input?(argument.type, argument.name, argument.ast)
+            argument = call.arguments.arguments.first
+            if user_input?(argument)
               warn! @target, self, call.location, "User supplied value in send"
             end
           end

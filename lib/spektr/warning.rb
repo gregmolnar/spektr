@@ -10,12 +10,12 @@ module Spektr
       @location = location
       @message = message
       @confidence = confidence
-      @line = IO.readlines(full_path)[@location.line - 1].strip if full_path && @location && File.exist?(full_path)
+      @line = IO.readlines(full_path)[@location.start_line - 1].strip if full_path && @location && File.exist?(full_path)
     end
 
     def full_message
       if @location
-        "#{message} at line #{@location.line} of #{@path}"
+        "#{message} at line #{@location.start_line} of #{@path}"
       else
         "#{message}"
       end

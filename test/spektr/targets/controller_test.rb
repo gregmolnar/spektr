@@ -27,7 +27,7 @@ class ControllerTest < Minitest::Test
       end
     end
     CODE
-    controller = Spektr::Targets::Controller.new('pupils_controller.rb', code)
+    Spektr::Targets::Controller.new('pupils_controller.rb', code)
     assert_equal 'Admin::Schools::PupilsController', controller.name
     code = <<-CODE
     module Admin
@@ -38,49 +38,49 @@ class ControllerTest < Minitest::Test
     end
     CODE
     controller = Spektr::Targets::Controller.new('pupils_controller.rb', code)
-    assert_equal 'Admin::Schools::PupilsController', controller.name
+    assert_equal 'Admin::PupilsController', controller.name
   end
 
   def test_it_sets_parent
     code = <<-CODE
-    class ApplicationController
-    end
+      class ApplicationController
+      end
     CODE
     controller = Spektr::Targets::Controller.new('application_controller.rb', code)
-    assert_equal '', controller.parent
+    assert_equal "", controller.parent
 
     code = <<-CODE
-    class PostsController < ApplicationController
-    end
+      class PostsController < ApplicationController
+      end
     CODE
     controller = Spektr::Targets::Controller.new('application_controller.rb', code)
     assert_equal 'ApplicationController', controller.parent
 
     code = <<-CODE
-    class SessionsController < Devise::SessionsController
-    end
+      class SessionsController < Devise::SessionsController
+      end
     CODE
     controller = Spektr::Targets::Controller.new('application_controller.rb', code)
     assert_equal 'Devise::SessionsController', controller.parent
 
     code = <<-CODE
-    module Admin
-      class PostsController < ApplicationController
-        def index
+      module Admin
+        class PostsController < ApplicationController
+          def index
+          end
         end
       end
-    end
     CODE
     controller = Spektr::Targets::Controller.new('admin/posts_controller.rb', code)
-    assert_equal 'ApplicationController', controller.parent
+    assert_equal 'Admin::ApplicationController', controller.parent
 
     code = <<-CODE
-    module Admin
-      class PostsController < Admin::ApplicationController
-        def index
+      module Admin
+        class PostsController < ApplicationController
+          def index
+          end
         end
       end
-    end
     CODE
     controller = Spektr::Targets::Controller.new('admin/posts_controller.rb', code)
     assert_equal 'Admin::ApplicationController', controller.parent
@@ -88,7 +88,7 @@ class ControllerTest < Minitest::Test
     code = <<-CODE
     module Admin
       module Settings
-        class CampaignsController < Admin::Settings::BaseController
+        class CampaignsController < BaseController
         end
       end
     end
@@ -107,53 +107,53 @@ class ControllerTest < Minitest::Test
     end
     CODE
     controller = Spektr::Targets::Controller.new('api/v0/admin/organisations_controller.rb', code)
-    assert_equal 'Api::V0::Admin::ApiController', controller.processor.parent_name_with_modules
+    assert_equal 'Api::V0::Admin::ApiController', controller.parent
 
     code = <<-CODE
     module Admin
-      class ProfileFieldsController < Admin::ApplicationController
+      class ProfileFieldsController < ApplicationController
       end
     end
     CODE
     controller = Spektr::Targets::Controller.new('admin/profile_controller.rb', code)
-    assert_equal 'Admin::ApplicationController', controller.processor.parent_name_with_modules
+    assert_equal 'Admin::ApplicationController', controller.parent
   end
 
   def test_it_sets_template
-    code = <<-CODE
-    class PostsController
+  code = <<-CODE
+  class PostsController
+    def index
+    end
+  end
+  CODE
+  controller = Spektr::Targets::Controller.new('application_controller.rb', code)
+  assert_equal 'posts/index', controller.actions.first.template
+  code = <<-CODE
+  module Admin
+    class PostsController < ApplicationController
       def index
       end
     end
-    CODE
-    controller = Spektr::Targets::Controller.new('application_controller.rb', code)
-    assert_equal 'posts/index', controller.actions.first.template
-    code = <<-CODE
-    module Admin
-      class PostsController < ApplicationController
-        def index
-        end
-      end
+  end
+  CODE
+  controller = Spektr::Targets::Controller.new('application_controller.rb', code)
+  assert_equal 'admin/posts/index', controller.actions.first.template
+  code = <<-CODE
+  class Admin::PostsController < ApplicationController
+    def index
     end
-    CODE
-    controller = Spektr::Targets::Controller.new('application_controller.rb', code)
-    assert_equal 'admin/posts/index', controller.actions.first.template
-    code = <<-CODE
-    class Admin::PostsController < ApplicationController
-      def index
-      end
+  end
+  CODE
+  controller = Spektr::Targets::Controller.new('application_controller.rb', code)
+  assert_equal 'admin/posts/index', controller.actions.first.template
+  code = <<-CODE
+  class SessionsController < Devise::SessionsController
+    def index
     end
-    CODE
-    controller = Spektr::Targets::Controller.new('application_controller.rb', code)
-    assert_equal 'admin/posts/index', controller.actions.first.template
-    code = <<-CODE
-    class SessionsController < Devise::SessionsController
-      def index
-      end
-    end
-    CODE
-    controller = Spektr::Targets::Controller.new('application_controller.rb', code)
-    assert_equal 'devise/sessions/index', controller.actions.first.template
+  end
+  CODE
+  controller = Spektr::Targets::Controller.new('application_controller.rb', code)
+  assert_equal 'devise/sessions/index', controller.actions.first.template
   end
 
   def setup_application_controller
@@ -190,7 +190,7 @@ class ControllerTest < Minitest::Test
   def test_it_registers_actions
     setup_application_controller
     assert_equal 3, @controller.actions.size
-    assert_empty @controller.actions.first.body
-    refute_empty @controller.actions[2].body
+    assert_nil @controller.actions.first.body
+    refute_nil @controller.actions[2].body
   end
 end

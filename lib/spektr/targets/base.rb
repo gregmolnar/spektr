@@ -1,118 +1,105 @@
 module Spektr
   module Targets
-    class Base
-      attr_accessor :path, :name, :options, :ast, :parent, :processor
+    class Base < Prism::Visitor
+      attr_accessor :path, :name, :options, :ast, :parent, :parent_modules, :methods, :calls, :interpolated_xstrings
 
       def initialize(path, content)
         Spektr.logger.debug "loading #{path}"
-        @ast = Spektr::App.parser.parse(content)
+        @ast = Prism.parse(content)
         @path = path
         return unless @ast
+        @parent = ""
+        @parent_modules = []
+        @methods = []
+        @calls = []
+        @interpolated_xstrings = []
+        @ast.value.accept(self)
+        @name = @path.split('/').last if @name&.blank?
+        @name = @name.prepend("#{@parent_modules.map(&:name).join('::')}::") if @parent_modules.any?
+      end
 
-        @processor = Spektr::Processors::Base.new
-        @processor.process(@ast)
-        @name = @processor.name
-        @name = @path.split('/').last if @name.blank?
+      def method_definitions
+        @method_definitions ||= find_methods(node: @ast)
+      end
 
-        @current_method_type = :public
-        @parent = @processor.parent_name
+      def public_methods
+        @public_methods ||= find_methods(node: @ast, visibility: :public)
       end
 
       def find_calls(name, receiver = nil)
-        calls = find(:send, name, @ast).map { |ast| Exp::Send.new(ast) }
-        if receiver
-          calls.select! { |call| call.receiver&.expanded == receiver }
-        elsif receiver == false
-          calls.select! { |call| call.receiver.nil? }
+        if name.is_a? Regexp
+          operator = :=~
+        else
+          operator = :==
         end
-        calls
+        @calls.select do |node|
+          if receiver.nil?
+            node.name.send(operator, name)
+          elsif receiver == false
+            node.name.send(operator, name) && node.receiver.nil?
+          else
+            node_receiver = node.receiver.name unless node.receiver.nil?
+            if node.receiver.respond_to?(:parent)
+              node_receiver = node_receiver.to_s.prepend("#{node.receiver.parent.name}::").to_sym
+            end
+            node.name.send(operator, name) && node.receiver && receiver == node_receiver
+          end
+        end
       end
 
       def find_calls_with_block(name, _receiver = nil)
-        blocks = find(:block, nil, @ast)
-        blocks.each_with_object([]) do |block, memo|
-          if block.children.first.children[1] == name
-            result = find(:send, name, block).map { |ast| Exp::Send.new(ast) }
-            memo << result.first
-          end
+        find_calls(name).select do |call|
+          call.block
         end
       end
 
       def find_method(name)
-        find(:def, name, @ast).last
+        @methods.find{|method| method.name == name }
       end
 
-      def find_xstr
-        find(:xstr, nil, @ast).map { |ast| Exp::Xstr.new(ast) }
+      def find_methods(node:, visibility: :all)
+        Spektr::Extractors::Methods.new(visibility:).call(node).result
       end
 
-      def find(type, name, ast, result = [])
-        return result unless ast.is_a? Parser::AST::Node
 
-        name_index = case type
-                     when :def
-                       0
-                     else
-                       1
-                     end
-        if node_matches?(ast.type, ast.children[name_index], type, name)
-          result << ast
-        elsif ast.children.any?
-          ast.children.each do |child|
-            result = find(type, name, child, result)
+      def visit_call_node(node)
+        @calls << node
+        super
+      end
+
+      def visit_class_node(node)
+        @name = node.name.to_s
+        case node.superclass
+        when Prism::CallNode
+          @parent = node.superclass.receiver.name.to_s
+        when Prism::ConstantPathNode, Prism::ConstantReadNode
+          @parent = node.superclass.name.to_s
+          @parent.prepend("#{node.superclass.parent.name}::") if node.superclass.respond_to?(:parent)
+          if node.superclass.respond_to?(:parent) && node.superclass.parent.respond_to?(:parent)
+            @parent.prepend("#{node.superclass.parent.parent.name}::")
           end
         end
-        result
+        if node.is_a?(Prism::ClassNode) && node.constant_path && node.constant_path.respond_to?(:parent)
+          @parent = node.constant_path.parent.name.to_s
+        end
+        @parent = @parent.prepend("#{@parent_modules.map(&:name).join('::')}::") if @parent_modules.any?
+        super
       end
 
-      def node_matches?(node_type, node_name, type, name)
-        if node_type == type
-          if name.is_a? Regexp
-            return node_name =~ name
-          elsif name.nil?
-            return true
-          else
-            return node_name == name
-          end
-        end
-        false
+      def visit_module_node(node)
+        @parent_modules << node.constant_path.parent.name if node.constant_path && node.constant_path.respond_to?(:parent)
+        @parent_modules << node
+        super
       end
 
-      def find_methods(ast:, result: [], type: :all)
-        return result unless ast.is_a?(Parser::AST::Node)
-
-        if ast.type == :send && %i[private public protected].include?(ast.children.last)
-          @current_method_type = ast.children.last
-        end
-        if ast.type == :def && [:all, @current_method_type].include?(type)
-          result << ast
-        elsif ast.children.any?
-          ast.children.map do |child|
-            result = find_methods(ast: child, result: result, type: type)
-          end
-        end
-        result
+      def visit_def_node(node)
+        @methods << node
+        super
       end
 
-      def ast_to_exp(ast)
-        case ast.type
-        when :send
-          Exp::Send.new(ast)
-        when :def
-          Exp::Definition.new(ast)
-        when :ivasgn, :ivar
-          Exp::Ivasgin.new(ast)
-        when :lvasign, :lvar
-          Exp::Lvasign.new(ast)
-        when :const
-          Exp::Const.new(ast)
-        when :xstr
-          Exp::Xstr.new(ast)
-        when :sym, :int, :str
-          Exp::Base.new(ast)
-        else
-          raise "Unknown type #{ast.type} #{ast.inspect}"
-        end
+      def visit_interpolated_x_string_node(node)
+        @interpolated_xstrings << node
+        super
       end
     end
   end

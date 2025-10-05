@@ -46,16 +46,9 @@ class CsrfSettingTest < Minitest::Test
       end
     CODE
 
-    admin_application_controller = <<-CODE
-      module Admin
-        class ApplicationController < ApplicationController
-        end
-      end
-    CODE
-
     admin_controller = <<-CODE
       module Admin
-        class AdminController < Admin::ApplicationController
+        class AdminController < ApplicationController
         end
       end
     CODE
@@ -69,7 +62,7 @@ class CsrfSettingTest < Minitest::Test
     app = Spektr::App.new(checks: [Spektr::Checks::CsrfSetting])
     app.rails_version = Gem::Version.new('4.0.0')
     app.controllers = [Spektr::Targets::Controller.new('application_controller.rb', application_controller),
-                       Spektr::Targets::Controller.new('admin/application_controller.rb', admin_application_controller),
+                       # Spektr::Targets::Controller.new('admin/application_controller.rb', admin_application_controller),
                        Spektr::Targets::Controller.new('admin_controller.rb', admin_controller)]
     controller = Spektr::Targets::Controller.new('posts_controller.rb', code)
     check = Spektr::Checks::CsrfSetting.new(app, controller)

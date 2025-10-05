@@ -24,7 +24,7 @@ module Spektr
 
       def uses_json_gem?
         @target.find_calls(:backend=).each do |call|
-          if call.receiver.expanded == "ActiveSupport.JSON" && call.arguments.first&.name == :JSONGem
+          if full_receiver(call) == "ActiveSupport.JSON" && call.arguments.arguments.first&.name == :JSONGem
             warn! @target, self, call.location, "Remote Code Execution CVE_2013_0333"
           end
         end
