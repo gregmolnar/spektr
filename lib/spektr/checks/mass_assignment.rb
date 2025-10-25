@@ -20,7 +20,7 @@ module Spektr
           end
         end
         calls.each do |call|
-          argument = call.arguments.arguments.first
+          argument = call.arguments&.arguments&.first
           next if argument.nil?
           ::Spektr.logger.debug "Mass assignment check at #{call.location.start_line}"
           if user_input?(argument)
