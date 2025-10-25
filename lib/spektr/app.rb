@@ -53,12 +53,7 @@ module Spektr
       # TODO: load non-app lib too
       @lib_files = find_files('lib').map do |path|
         next if loaded_files.include?(path)
-        begin
-          Targets::Base.new(path, File.read(path, encoding: 'utf-8'))
-        rescue Parser::SyntaxError => e
-          ::Spektr.logger.debug "Couldn't parse #{path}: #{e.message}"
-          nil
-        end
+        Targets::Base.new(path, File.read(path, encoding: 'utf-8'))
       end.reject(&:nil?)
       self
     end
@@ -117,7 +112,7 @@ module Spektr
           name: warning.check.name,
           description: warning.message,
           path: warning.path,
-          location: warning.location&.line,
+          location: warning.location&.start_line,
           line: warning.line,
           check: warning.check.class.name,
           fingerprint: warning.fingerprint
