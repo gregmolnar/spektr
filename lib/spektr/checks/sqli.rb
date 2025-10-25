@@ -15,7 +15,7 @@ module Spektr
           :average, :count, :maximum, :minimum, :sum, :exists?,
           :find_by, :find_by!, :find_or_create_by, :find_or_create_by!,
           :find_or_initialize_by, :from, :group, :having, :join, :lock,
-          :where, :not, :select, :rewhere, :reselect, :update_all
+          :where, :not, :select, :rewhere, :reselect, :update_all, :find_by_sql
 
         ].each do |m|
           @target.find_calls(m).each do |call|

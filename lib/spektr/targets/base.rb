@@ -1,7 +1,7 @@
 module Spektr
   module Targets
     class Base < Prism::Visitor
-      attr_accessor :path, :name, :options, :ast, :parent, :parent_modules, :methods, :calls, :interpolated_xstrings
+      attr_accessor :path, :name, :options, :ast, :parent, :parent_modules, :methods, :calls, :interpolated_xstrings, :lvars
 
       def initialize(path, content)
         Spektr.logger.debug "loading #{path}"
@@ -11,11 +11,13 @@ module Spektr
         @parent = ""
         @parent_modules = []
         @methods = []
+        @lvars = []
+        @ivars = []
         @calls = []
         @interpolated_xstrings = []
         @ast.value.accept(self)
         @name = @path.split('/').last if @name&.blank?
-        @name = @name.prepend("#{@parent_modules.map(&:name).join('::')}::") if @parent_modules.any?
+        @name = @name.prepend("#{@parent_modules.map(&:name).join('::')}::") if @name && @parent_modules.any?
       end
 
       def method_definitions
@@ -38,7 +40,7 @@ module Spektr
           elsif receiver == false
             node.name.send(operator, name) && node.receiver.nil?
           else
-            node_receiver = node.receiver.name unless node.receiver.nil?
+            node_receiver = node.receiver.name if node.receiver.respond_to?(:name)
             if node.receiver.respond_to?(:parent)
               node_receiver = node_receiver.to_s.prepend("#{node.receiver.parent.name}::").to_sym
             end
@@ -99,6 +101,16 @@ module Spektr
 
       def visit_interpolated_x_string_node(node)
         @interpolated_xstrings << node
+        super
+      end
+
+      def visit_local_variable_write_node(node)
+        @lvars << node
+        super
+      end
+
+      def visit_instance_variable_write_node(node)
+        @ivars << node
         super
       end
     end

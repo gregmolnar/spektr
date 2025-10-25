@@ -66,7 +66,10 @@ module Spektr
           return true if user_input?(element.key)
           return true if user_input?(element.value)
         end
-      when :local_variable_read_node, :instance_variable_read_node
+      # TODO: make this better. ivars can be overridden in the view as well and
+      # can be set in non controller targets too
+      when :instance_variable_read_node
+        return false unless @target.respond_to?(:view_path)
         actions = []
         @app.controllers.each do |controller|
           actions = actions.concat controller.actions.select { |action|
@@ -79,7 +82,9 @@ module Spektr
             return true if exp.name == node.name && user_input?(exp)
           end
         end
-      when :instance_variable_write_node
+      when :local_variable_read_node
+        return user_input?(@target.lvars.find{|n| n.name == node.name })
+      when :instance_variable_write_node, :local_variable_write_node
         return user_input? node.value
       when :parentheses_node
         node.body.body.each do |item|
