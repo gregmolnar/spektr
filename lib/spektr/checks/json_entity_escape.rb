@@ -14,12 +14,16 @@ module Spektr
         if @app.production_config
           config = @app.production_config.find_calls(:escape_html_entities_in_json=).first
         end
-        if config and config.receiver.expanded == "config.active_support" && config.arguments.first.type == :false
+        if config and full_receiver(config) == "config.active_support" && config.arguments.arguments.first.type == :false_node
           warn! @app.production_config.path, self, nil, "HTML entities in JSON are not escaped by default"
         end
-        ['ActiveSupport', 'ActiveSupport.JSON.Encoding'].each do |receiver|
-          calls = @target.find_calls(:escape_html_entities_in_json=, receiver)
-          if calls.any?
+
+        if @target.find_calls(:escape_html_entities_in_json=, 'ActiveSupport'.to_sym).any?
+          warn! @target, self, calls.first.location, "HTML entities in JSON are not escaped by default"
+        end
+        calls = @target.find_calls(:escape_html_entities_in_json=, 'JSON::Encoding'.to_sym)
+        calls.each do |call|
+          if full_receiver(call) == 'ActiveSupport.JSON.Encoding'
             warn! @target, self, calls.first.location, "HTML entities in JSON are not escaped by default"
           end
         end
@@ -27,4 +31,3 @@ module Spektr
     end
   end
 end
-

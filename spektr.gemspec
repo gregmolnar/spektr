@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   # spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/gregmolnar/spektr"
+  spec.metadata['source_code_uri'] = 'https://github.com/gregmolnar/spektr'
   # spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   # Specify which files should be added to the gem when it is released.
@@ -28,9 +28,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'erubi'
+  spec.add_dependency 'herb'
   spec.add_dependency 'haml'
-  spec.add_dependency 'parser', '>= 2.6.0'
   spec.add_dependency 'pastel'
+  spec.add_dependency 'prism'
   spec.add_dependency 'ruby_parser', '>= 3.0'
   spec.add_dependency 'slim'
   spec.add_dependency 'tty-color'

@@ -6,6 +6,7 @@
 <%== @safe_attr %>
 <%= @post.title %>
 <%= @safe_attr.html_safe %>
+<%= raw Sensor::NAMES.map{|n| {val: n, text: t(n, scope: "sensors.categories")} } %>
 <!-- xss -->
 <%= content_tag :div, @welcome_message, @attr => "foobar" %>
 <%== params[:foobar] %>
@@ -16,4 +17,3 @@
 <%= @post.title.html_safe %>
 <%== @post.title %>
 <%= raw cookies[:font] %>
-<%= raw Sensor::NAMES.map{|n| {val: n, text: t(n, scope: "sensors.categories")} } %>

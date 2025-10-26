@@ -29,19 +29,27 @@ module Spektr
         cve_2016_6316_check(calls)
 
         calls.each do |call|
-          call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name, argument.ast) && @app.rails_version < Gem::Version.new("3.0")
-              warn! @target, self, call.location, "Unescaped parameter in content_tag"
+          call.arguments.is_a?(Prism::ArgumentsNode) ? arguments = call.arguments.arguments : call.arguments
+          arguments.each do |argument|
+            if user_input?(argument) && @app.rails_version < Gem::Version.new("3.0")
+              warn! @target, self, call.location, "Unescaped parameter in content_tag in Rails < 3.0"
             end
-          end
-
-          if call.options.any?
-            call.options.each_value do |option|
-              if user_input?(option.key.type, option.key.children.last)
-                warn! @target, self, call.location, "Unescaped attribute name in content_tag"
+            if argument.is_a?(Prism::KeywordHashNode)
+              argument.elements.each do |element|
+                if user_input?(element.key)
+                  warn! @target, self, call.location, "Unescaped parameter in content_tag at #{element.key.name}"
+                end
               end
             end
           end
+
+          # if call.options.any?
+          #   call.options.each_value do |option|
+          #     if user_input?(option.key.type, option.key.children.last)
+          #       warn! @target, self, call.location, "Unescaped attribute name in content_tag"
+          #     end
+          #   end
+          # end
         end
       end
 

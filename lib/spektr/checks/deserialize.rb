@@ -18,41 +18,37 @@ module Spektr
       end
 
       def check_csv
-        check_method(:load, "CSV")
+        check_method(:load, :CSV)
       end
 
       # TODO: handle safe yaml
       def check_yaml
         [:load_documents, :load_stream, :parse_documents, :parse_stream].each do |method|
-          check_method(method, "YAML")
+          check_method(method, :YAML)
         end
       end
 
       def check_marshal
         [:load, :restore].each do |method|
-          check_method(method, "Marshal")
+          check_method(method, :Marshal)
         end
       end
 
       def check_oj
-        check_method(:object_load, "Oj")
+        check_method(:object_load, :Oj)
         safe_default = false
-        safe_default = true if @target.find_calls(:mimic_JSON, "Oj").any?
-        call = @target.find_calls(:default_options=, "Oj").last
-        safe_default = true if call && call.options[:mode]&.value != :object
+        safe_default = true if @target.find_calls(:mimic_JSON, :Oj).any?
+        call = @target.find_calls(:default_options=, :Oj).last
+        safe_default = true if call && call.arguments.arguments.first.elements.find{|e| e.key.unescaped == "mode" }.value.unescaped != "object"
         unless safe_default
-          check_method(:load, "Oj")
+          check_method(:load, :Oj)
         end
       end
 
       def check_method(method, receiver)
         calls = @target.find_calls(method, receiver)
         calls.each do |call|
-          argument = call.arguments.first
-          if argument.ast.type == :send && argument.ast.children.last.children.first.is_a?(Parser::AST::Node)
-            argument = Exp::Argument.new(argument.ast.children.last.children.first)
-          end
-          if user_input?(argument.type, argument.name, argument.ast)
+          if user_input?(call.arguments.arguments.first)
             warn! @target, self, call.location, "#{receiver}.#{method} is called with user supplied value"
           end
         end

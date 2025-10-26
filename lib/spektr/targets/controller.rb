@@ -1,27 +1,28 @@
 module Spektr
   module Targets
     class Controller < Base
-      attr_accessor :actions
 
       def initialize(path, content)
         super
-        find_actions
       end
 
       def concern?
         !name.match('Controller')
       end
 
-      def find_actions
-        @actions = find_methods(ast: @ast, type: :public).map do |ast|
-          Action.new(ast, self)
+      def actions
+        @actions ||= public_methods.map do |node|
+          Action.new(node, self)
         end
       end
 
+      def find_action(action)
+        @actions.find{|a| a.name == action }
+      end
+
       def find_parent(controllers)
-        parent_name = @processor.parent_name
-        result = find_in_set(parent_name, controllers)
-        result ||= find_in_set(processor.parent_name_with_modules, controllers)
+        result = find_in_set(@parent, controllers)
+        # result ||= find_in_set(processor.parent_name_with_modules, controllers)
         return nil if result&.name == name
 
         result
@@ -40,33 +41,43 @@ module Spektr
         result
       end
 
-      class Action < Spektr::Exp::Definition
-        attr_accessor :controller, :template
+      class Action
+        attr_accessor :node, :name, :controller, :template
 
-        def initialize(ast, controller)
-          super(ast)
+        def initialize(node, controller)
+          @node = node
+          @name = node.name
           @template = nil
+          @controller = controller
           split = []
-          if controller.parent
+          if controller.parent && controller.parent != 'ApplicationController'
             split = controller.parent.split('::').map { |e| e.delete_suffix('Controller') }.map(&:downcase)
             if split.size > 1
               split.pop
               @template = "#{split.join('/')}/#{@template}"
             end
           end
-          split = split.concat(controller.name.delete_suffix('Controller').split('::').map(&:downcase)).uniq
+
+          split = split.concat(controller.name.split('::').map do |n|
+            n.delete_suffix('Controller')
+          end.map(&:downcase)).uniq
           split.delete('application')
           @template = File.join(*split, name.to_s)
-          @body.each do |exp|
-            if exp.send? && (exp.name == :render && exp.arguments.any?)
-              if exp.arguments.first.type == :sym
-                @template = File.join(controller.name.delete_suffix('Controller').underscore,
-                                      exp.arguments.first.name.to_s)
-              elsif exp.arguments.first.type == :str
-                @template = exp.arguments.first.name
-              end
-            end
-          end
+          # TODO: set template from render
+          # @body.each do |exp|
+          #   if exp.send? && exp.name == :render && exp.arguments.any?
+          #     if exp.arguments.first.type == :sym
+          #       @template = File.join(controller.name.delete_suffix('Controller').underscore,
+          #                             exp.arguments.first.name.to_s)
+          #     elsif exp.arguments.first.type == :str
+          #       @template = exp.arguments.first.name
+          #     end
+          #   end
+          # end
+        end
+
+        def body
+          @node.body.respond_to?(:body) ? @node.body.body : @node.body
         end
       end
     end

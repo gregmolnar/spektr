@@ -22,11 +22,12 @@ module Spektr
             memo
           end
           calls.each do |call|
-            if call.arguments.first.name == ":controller(/:action(/:id(.:format)))" or (call.arguments.first.name.include?(":controller") &&  (call.arguments.first.name.include?(":action") or call.arguments.first.name.include?("*action")) )
+            argument_value = call.arguments.arguments.first.unescaped
+            if argument_value == ":controller(/:action(/:id(.:format)))" or (argument_value.include?(":controller") &&  (argument_value.include?(":action") or argument_value.include?("*action")) )
               warn! @target, self, call.location, "All public methods in controllers are available as actions"
             end
 
-            if call.arguments.first.name.include?(":action") or call.arguments.first.name.include?("*action")
+            if argument_value.include?(":action") or argument_value.include?("*action")
               warn! @target, self, call.location, "All public methods in controllers are available as actions"
             end
           end

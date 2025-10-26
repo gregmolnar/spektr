@@ -9,6 +9,7 @@ module Spektr
       end
 
       def run
+        # TODO: write a test for this
         return unless super
         if app_version_between?("4.1.0", "4.1.10") || app_version_between?("4.2.0", "4.2.1")
           if calls = @target.find_calls(:to_json).any? || calls = @target.find_calls(:encode).any?

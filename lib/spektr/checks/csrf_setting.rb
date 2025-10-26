@@ -12,27 +12,13 @@ module Spektr
         return unless super
         return if @target.concern?
 
-        enabled = false
         target = @target
-        while target
-          parent_controller = target.find_parent(@app.controllers)
-          enabled = parent_controller && parent_controller.find_calls(:protect_from_forgery).any?
-          break if enabled || parent_controller.nil?
+        return if @target.find_calls(:skip_forgery_protection).none?
 
-          target = parent_controller
-        end
-        return if enabled && @target.find_calls(:skip_forgery_protection).none?
+        skip = @target.find_calls(:skip_forgery_protection).last
+        return if skip && skip.arguments && skip.arguments.arguments.first.elements.map(&:key).map(&:unescaped).intersection(%w[only except]).any?
 
-        if @target.find_calls(:protect_from_forgery).none? || (enabled && @target.find_calls(:skip_forgery_protection).any?)
-          skip = @target.find_calls(:skip_forgery_protection).last
-          return if enabled && skip && skip.options.keys.intersection(%i[only except]).any?
-
-          warn! @target, self, nil, 'protect_from_forgery should be enabled'
-        end
-        if @target.find_calls(:skip_forgery_protection).any?
-          return @target.find_calls(:skip_forgery_protection).last.options.keys.intersection(%i[only except]).any?
-          warn! @target, self, nil, 'protect_from_forgery should be enabled'
-        end
+        warn! @target, self, nil, 'protect_from_forgery should be enabled'
       end
     end
   end

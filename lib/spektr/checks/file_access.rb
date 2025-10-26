@@ -19,15 +19,15 @@ module Spektr
         methods = [:[], :chdir, :chroot, :delete, :entries, :foreach, :glob, :install, :lchmod, :lchown, :link, :load, :load_file, :makedirs, :move, :new, :open, :read, :readlines, :rename, :rmdir, :safe_unlink, :symlink, :syscopy, :sysopen, :truncate, :unlink]
         targets.each do |target|
           methods.each do |method|
-            check_calls_for_user_input(@target.find_calls(method, target))
+            check_calls_for_user_input(@target.find_calls(method, target.to_sym))
           end
         end
       end
 
       def check_calls_for_user_input(calls)
         calls.each do |call|
-          call.arguments.each do |argument|
-            if user_input?(argument.type, argument.name, argument.ast)
+          call.arguments.arguments.each do |argument|
+            if user_input?(argument)
               warn! @target, self, call.location, "#{argument.name} is used for a filename, which enables an attacker to access arbitrary files."
             end
           end

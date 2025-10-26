@@ -36,19 +36,40 @@ module Spektr
     def dupe?(path, location, message)
       @app.warnings.find do |w|
         w.path == path &&
-          (w.location.nil? || w.location&.line == location&.line) &&
+          (w.location.nil? || w.location&.start_line == location&.start_line) &&
           w.message == message
       end
     end
 
     def version_affected; end
 
-    def user_input?(type, name, ast = nil, object = nil)
-      case type
-      when :ivar, :lvar
-        # TODO: handle helpers here too
-        return false unless @target.instance_of?(Spektr::Targets::View)
-
+    def user_input?(node)
+      case node.type
+      when :call_node
+        return true if %i[params cookies request].include? node.name
+        return true if node.receiver && user_input?(node.receiver)
+        if node.arguments
+          node.arguments.arguments.each do |argument|
+            return true if user_input?(argument)
+          end
+        end
+      when :embedded_statements_node
+        node.statements.body.each do |item|
+          return true if user_input? item
+        end
+      when :interpolated_string_node, :interpolated_x_string_node
+        node.parts.each do |part|
+          return true if user_input?(part)
+        end
+      when :keyword_hash_node, :hash_node
+        node.elements.each do |element|
+          return true if user_input?(element.key)
+          return true if user_input?(element.value)
+        end
+      # TODO: make this better. ivars can be overridden in the view as well and
+      # can be set in non controller targets too
+      when :instance_variable_read_node
+        return false unless @target.respond_to?(:view_path)
         actions = []
         @app.controllers.each do |controller|
           actions = actions.concat controller.actions.select { |action|
@@ -56,55 +77,33 @@ module Spektr
           }
         end
         actions.each do |action|
+          next unless action.body
           action.body.each do |exp|
-            return exp.user_input? if exp.is_a?(Exp::Ivasign) && exp.name == name
+            return true if exp.name == node.name && user_input?(exp)
           end
         end
-        false
-      when :send
-        if ast && ast.children.first&.type == :send
-          child = ast.children.first
-          return user_input?(child.type, child.children.last, child)
+      when :local_variable_read_node
+        return user_input?(@target.lvars.find{|n| n.name == node.name })
+      when :instance_variable_write_node, :local_variable_write_node
+        return user_input? node.value
+      when :parentheses_node
+        node.body.body.each do |item|
+          return user_input? item
         end
-        return true if %i[params cookies request].include? name
-      when :xstr, :begin
-        ast.children.each do |child|
-          next unless child.is_a?(Parser::AST::Node)
-          return true if user_input?(child.type, child.children.last, child)
-        end
-      when :dstr
-        object&.children&.each do |child|
-          if child.is_a?(Parser::AST::Node)
-            name = nil
-            ast = child
-          else
-            name = child.name
-            ast = child.ast
-          end
-          return true if user_input?(child.type, name, ast)
-        end
-      when :lvasgn
-        ast.children.each do |child|
-          next unless child.is_a?(Parser::AST::Node)
-          return true if user_input?(child.type, child.children.last, child)
-        end
-      when :block, :pair, :hash, :array, :if, :or, :begin, :and
-        ast.children.each do |child|
-          next unless child.is_a?(Parser::AST::Node)
-          return true if user_input?(child.type, child.children.last, child)
-        end
-      when :sym, :str, :const, :int, :cbase, :true, :self, :args, :nil, :yield, :super
+
+      when :string_node, :symbol_node, :constant_read_node, :integer_node, :true_node, :constant_path_node
         # do nothing
       else
-        raise "Unknown argument type #{type} #{name} #{ast.inspect}"
+        raise "Unknown argument type #{node.type.inspect} #{node.inspect}"
       end
+      false
     end
 
     # TODO: this doesn't work properly
-    def model_attribute?(item)
+    def model_attribute?(node)
       model_names = @app.models.collect(&:name)
-      case item.type
-      when :ivar, :lvar
+      case node.type
+      when :local_variable_read_node, :instance_variable_read_node
         # TODO: handle helpers here too
         if ["Spektr::Targets::Controller", "Spektr::Targets::View"].include?(@target.class.name)
           actions = []
@@ -115,28 +114,32 @@ module Spektr
           end
           actions.each do |action|
             action.body.each do |exp|
-              next unless item.respond_to?(:name)
-              return exp.user_input? if exp.is_a?(Exp::Ivasign) && exp.name == item.name
+              next unless node.respond_to?(:name)
+              return model_attribute?(exp.value) if exp.is_a?(Prism::InstanceVariableWriteNode) && exp.name == node.name
             end
           end
         end
-      when :send
-        ast = item.is_a?(Parser::AST::Node) ? item : item.ast
-        _send = Exp::Send.new(ast)
-        return true if _send.receiver && model_names.include?(_send.receiver.name)
-      when :const
-        return true if model_names.include? item.name
-      when :block, :pair, :hash, :array, :if, :or, :begin, :and
-        item.children.each do |child|
-          next unless child.is_a?(Parser::AST::Node)
-          return true if model_attribute?(child)
+      when :call_node
+        return model_attribute?(node.receiver) if node.receiver
+        if node.arguments
+          node.arguments.arguments.each do |argument|
+            return true if model_attribute?(argument)
+          end
         end
-      when :dstr
-        # TODO: implement this
-      when :sym, :str, :nil, :yield, :args, :super
+      when :parentheses_node
+        node.body.body.each do |item|
+          return model_attribute? item
+        end
+      when :constant_read_node
+        return true if model_names.include? node.name.to_s
+      when :interpolated_string_node
+        node.parts.each do |item|
+          return model_attribute? item
+        end
+      when :string_node, :symbol_node, :integer_node, :constant_path_node
         # do nothing
       else
-        raise "Unknown argument type #{item.type}"
+        raise "Unknown argument type #{node.type}"
       end
     end
 
@@ -147,6 +150,26 @@ module Spektr
     def version_between?(a, b, version)
       version = Gem::Version.new(version) unless version.is_a? Gem::Version
       version >= Gem::Version.new(a) && version <= Gem::Version.new(b)
+    end
+
+    def receivers_for(node)
+      receivers = []
+      receiver = node.receiver
+      while receiver
+        receivers <<  receiver.name
+        receiver = receiver.respond_to?(:receiver) ? receiver.receiver : false
+      end
+      receivers
+    end
+
+    def full_receiver(node)
+      parents = []
+      parent = node.receiver.parent if node.receiver.respond_to?(:parent)
+      while parent
+        parents <<  parent.name
+        parent = parent.respond_to?(:parent) ? parent.parent : false
+      end
+      parents.reverse.concat(receivers_for(node).reverse).join(".")
     end
   end
 end

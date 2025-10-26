@@ -11,15 +11,15 @@ module Spektr
       def run
         return unless super
         # backticks
-        @target.find_xstr.each do |call|
-          argument = call.arguments.first
-          next unless argument
-          if user_input?(argument.type, argument.name, argument.ast, argument)
-            warn! @target, self, call.location, "Command injection in #{call.name}"
+        @target.interpolated_xstrings.each do |call|
+          call.parts.each do |part|
+            if user_input?(part)
+              warn! @target, self, call.location, "Command injection"
+            end
           end
         end
 
-        targets = ["IO", "Open3", "Kernel", "POSIX::Spawn", "Process", false]
+        targets = [:IO, :Open3, :Kernel, :Spawn, :Process, false]
         methods = [:capture2, :capture2e, :capture3, :exec, :pipeline, :pipeline_r,
         :pipeline_rw, :pipeline_start, :pipeline_w, :popen, :popen2, :popen2e,
         :popen3, :spawn, :syscall, :system, :open]
@@ -32,13 +32,18 @@ module Spektr
 
       def check_calls(calls)
         # TODO: might need to exclude tempfile and ActiveStorage::Filename
+        return if calls.empty?
         calls.each do |call|
-          file_name = call.arguments.first
-          next unless file_name
-          if user_input?(file_name.type, file_name.name, file_name.ast, file_name)
+          if call.arguments.is_a?(Prism::ArgumentsNode)
+            argument = call.arguments.arguments.first
+          else
+            argument = call.arguments.first
+          end
+          next unless argument
+          if user_input?(argument) || model_attribute?(argument)
             warn! @target, self, call.location, "Command injection in #{call.name}"
           # TODO: interpolation, but might be safe, we should make this better
-          elsif file_name.type == :dstr
+          elsif argument.type == :embedded_statements_node
             warn! @target, self, call.location, "Command injection in #{call.name}", :low
           end
         end

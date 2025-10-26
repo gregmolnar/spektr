@@ -48,13 +48,14 @@ class SqliTest < Minitest::Test
           Post.reselect(params[:field])
 
           Post.update_all(params[:q])
-
+          term = params[:term]
+          Product.find_by_sql("SELECT * FROM products WHERE title LIKE '%\#{term}%'")
         end
       end
     CODE
     controller = Spektr::Targets::Controller.new("blog_controller.rb", code)
     check = Spektr::Checks::Sqli.new(@app, controller)
     check.run
-    assert_equal 27, @app.warnings.size
+    assert_equal 28, @app.warnings.size
   end
 end

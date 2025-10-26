@@ -35,7 +35,7 @@ class LinkToHrefTest < Minitest::Test
   def test_it_does_not_fail_with_url_helpers
     code = <<-CODE
       <%= link_to school.activities.count, school_activities_path(params[:id]) %>
-      <%= link_to school.activities.count, school_activities_url(params[:id]) %>
+      <%= link_to school.activities.count, school_activities_path(params[:id]) %>
     CODE
     app = Spektr::App.new(checks: [Spektr::Checks::LinkToHref])
     view = Spektr::Targets::View.new("index.html.erb", code)
