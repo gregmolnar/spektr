@@ -9,6 +9,6 @@ class XssTest < Minitest::Test
     @app.load
     @app.rails_version = Gem::Version.new "2.3.1"
     @app.scan!
-    assert_equal 8, @app.warnings.size
+    assert_equal 9, @app.warnings.size
   end
 end

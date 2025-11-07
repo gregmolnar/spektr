@@ -44,6 +44,7 @@ module Spektr
     def version_affected; end
 
     def user_input?(node)
+      return false if node.nil?
       case node.type
       when :call_node
         return true if %i[params cookies request].include? node.name

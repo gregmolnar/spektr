@@ -17,3 +17,6 @@
 <%= @post.title.html_safe %>
 <%== @post.title %>
 <%= raw cookies[:font] %>
+<% @posts.each do |post| %>
+  <%= post.title.html_safe %>
+<% end %>
