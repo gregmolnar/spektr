@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.5.0
+
+* change parser to Prism
+
 ## 0.4.1
 
 * fix core extension eager loading
