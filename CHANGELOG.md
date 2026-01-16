@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.5.1
+
+* fix root scope handling
+
+
 ## 0.5.0
 
 * change parser to Prism
