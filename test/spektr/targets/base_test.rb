@@ -77,6 +77,14 @@ class BaseTest < Minitest::Test
 
   end
 
+  def test_it_handles_root_scope
+    code = <<-CODE
+      ::Kernel.exec("ls")
+    CODE
+    target = Spektr::Targets::Base.new('application_controller.rb', code)
+    assert_equal 1, target.find_calls(:exec, :Kernel).size
+  end
+
   def test_it_finds_methods
     setup_application_controller
     assert_equal 3, @target.method_definitions.size

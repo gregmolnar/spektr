@@ -41,7 +41,7 @@ module Spektr
             node.name.send(operator, name) && node.receiver.nil?
           else
             node_receiver = node.receiver.name if node.receiver.respond_to?(:name)
-            if node.receiver.respond_to?(:parent)
+            if node.receiver.respond_to?(:parent) && node.receiver.parent
               node_receiver = node_receiver.to_s.prepend("#{node.receiver.parent.name}::").to_sym
             end
             node.name.send(operator, name) && node.receiver && receiver == node_receiver
