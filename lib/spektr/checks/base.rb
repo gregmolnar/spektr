@@ -91,8 +91,7 @@ module Spektr
         node.body.body.each do |item|
           return user_input? item
         end
-
-      when :string_node, :symbol_node, :constant_read_node, :integer_node, :true_node, :constant_path_node
+      when :string_node, :symbol_node, :constant_read_node, :integer_node, :true_node, :constant_path_node, :nil_node
         # do nothing
       else
         raise "Unknown argument type #{node.type.inspect} #{node.inspect}"
@@ -137,7 +136,7 @@ module Spektr
         node.parts.each do |item|
           return model_attribute? item
         end
-      when :string_node, :symbol_node, :integer_node, :constant_path_node
+      when :string_node, :symbol_node, :integer_node, :constant_path_node, :nil_node
         # do nothing
       else
         raise "Unknown argument type #{node.type}"
