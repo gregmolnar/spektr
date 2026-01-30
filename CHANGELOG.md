@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.5.2
+
+* handle nil nodes
+
 ## 0.5.1
 
 * fix root scope handling
