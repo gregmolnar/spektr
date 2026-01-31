@@ -25,9 +25,9 @@ module Spektr
           ::Spektr.logger.debug "Mass assignment check at #{call.location.start_line}"
           if user_input?(argument)
             # we check for permit! separately
-            next if argument.name == :permit!
+            next if argument.respond_to?(:name) && argument.name == :permit!
             # check for permit with arguments
-            next if argument.name == :permit && argument.arguments
+            next if argument.respond_to?(:name) && argument.name == :permit && argument.arguments
             warn! @target, self, call.location, "Mass assignment"
           end
         end

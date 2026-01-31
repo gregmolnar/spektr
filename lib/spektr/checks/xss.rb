@@ -43,7 +43,12 @@ module Spektr
             warn! @target, self, call.location, "Cross-Site Scripting: Unescaped user input"
           end
           if model_attribute?(call.receiver)
-            warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute #{call.receiver.name}"
+            name = if call.receiver.respond_to?(:name)
+                     call.receiver.name
+                   else
+                     ""
+                   end
+            warn! @target, self, call.location, "Cross-Site Scripting: Unescaped model attribute #{name}"
           end
         end
       end
