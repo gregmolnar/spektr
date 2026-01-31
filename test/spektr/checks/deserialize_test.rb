@@ -65,15 +65,14 @@ class DeserializeTest < Minitest::Test
     assert_equal 2, app.warnings.size
 
     # with safe mode
-    code = <<-CODE
-
+    code = <<~'CODE'
       class ApplicationController
         def index
           Oj.default_options = { mode: :strict }
           Oj.object_load("test")
           Oj.object_load(params[:path])
           Oj.load(params[:path])
-          result = Curl.get("https://posts.\#{Carrot.config[:service_domain_root]}/audit_log", query).body_str
+          result = Curl.get("https://posts.#{Carrot.config[:service_domain_root]}/audit_log", query).body_str
           data = data = Oj.load(result, mode: :compat)
         end
       end

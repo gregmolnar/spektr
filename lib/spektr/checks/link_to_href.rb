@@ -26,7 +26,8 @@ module Spektr
           next unless call.arguments
           ::Spektr.logger.debug "#{@target.path}  #{call.location.start_line} #{call.arguments.arguments[1].inspect}"
           next unless call.arguments.arguments[1]
-          next if call.arguments.arguments[1].name =~ /_url$|_path$/
+          name = call.arguments.arguments[1].name
+          next if name && name =~ /_url$|_path$/
           if user_input? call.arguments.arguments[1]
             warn! @target, self, call.location, "Cross-Site Scripting: Unsafe user supplied value in link_to"
           end

@@ -16,7 +16,7 @@ module Spektr
         calls = []
         model_names.each do |receiver|
           [:new, :build, :create].each do |method|
-            calls.concat @target.find_calls(method, receiver.to_sym)
+            calls.concat @target.find_calls(method, receiver&.to_sym)
           end
         end
         calls.each do |call|

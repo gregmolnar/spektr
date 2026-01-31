@@ -54,11 +54,11 @@ module Spektr
             return true if user_input?(argument)
           end
         end
-      when :embedded_statements_node
+      when :embedded_statements_node, :if_node, :else_node
         node.statements.body.each do |item|
           return true if user_input? item
         end
-      when :interpolated_string_node, :interpolated_x_string_node
+      when :interpolated_string_node, :interpolated_x_string_node, :interpolated_symbol_node
         node.parts.each do |part|
           return true if user_input?(part)
         end
@@ -66,6 +66,10 @@ module Spektr
         node.elements.each do |element|
           return true if user_input?(element.key)
           return true if user_input?(element.value)
+        end
+      when :array_node
+        node.elements.each do |element|
+          return true if user_input?(element)
         end
       # TODO: make this better. ivars can be overridden in the view as well and
       # can be set in non controller targets too
@@ -85,13 +89,20 @@ module Spektr
         end
       when :local_variable_read_node
         return user_input?(@target.lvars.find{|n| n.name == node.name })
+      when :local_variable_or_write_node
+        return user_input?(node.value)
+      when :and_node, :or_node
+        return user_input?(node.left)
+        return user_input?(node.right)
       when :instance_variable_write_node, :local_variable_write_node
         return user_input? node.value
+      when :splat_node
+        return user_input? node.expression
       when :parentheses_node
         node.body.body.each do |item|
           return user_input? item
         end
-      when :string_node, :symbol_node, :constant_read_node, :integer_node, :true_node, :constant_path_node, :nil_node
+      when :string_node, :symbol_node, :constant_read_node, :integer_node, :true_node, :constant_path_node, :nil_node, :true_node, :false_node, :self_node
         # do nothing
       else
         raise "Unknown argument type #{node.type.inspect} #{node.inspect}"
@@ -119,6 +130,11 @@ module Spektr
             end
           end
         end
+      when :local_variable_or_write_node
+        return model_attribute?(node.value)
+      when :and_node, :or_node
+        return model_attribute?(node.left)
+        return model_attribute?(node.right)
       when :call_node
         return model_attribute?(node.receiver) if node.receiver
         if node.arguments
@@ -126,17 +142,38 @@ module Spektr
             return true if model_attribute?(argument)
           end
         end
+      when :keyword_hash_node, :hash_node
+        node.elements.each do |element|
+          return true if model_attribute?(element.key)
+          return true if model_attribute?(element.value)
+        end
+      when :array_node
+        node.elements.each do |element|
+          return true if model_attribute?(element)
+        end
       when :parentheses_node
         node.body.body.each do |item|
           return model_attribute? item
         end
+      when :interpolated_string_node, :interpolated_x_string_node, :interpolated_symbol_node
+        node.parts.each do |part|
+          return true if model_attribute?(part)
+        end
+      when :embedded_statements_node, :if_node, :else_node
+        node.statements.body.each do |item|
+          return true if model_attribute? item
+        end
+      when :instance_variable_write_node, :local_variable_write_node
+        return model_attribute? node.value
       when :constant_read_node
         return true if model_names.include? node.name.to_s
       when :interpolated_string_node
         node.parts.each do |item|
           return model_attribute? item
         end
-      when :string_node, :symbol_node, :integer_node, :constant_path_node, :nil_node
+      when :splat_node
+        return model_attribute? node.expression
+      when :string_node, :symbol_node, :integer_node, :constant_path_node, :nil_node, :true_node, :false_node, :self_node
         # do nothing
       else
         raise "Unknown argument type #{node.type}"
