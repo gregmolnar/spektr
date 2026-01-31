@@ -11,6 +11,7 @@ class BaseTest < Minitest::Test
       true && true
       full_uri = 'file://' + Rails.public_path.join(*url.split('/')).to_s
       OgObject.where(game_id: self[:'games.id'], type: 'NotificationObject').first
+      relation = finder_class.unscoped.where(relation)
     CODE
     app = Spektr::App.new(checks: [])
     target = Spektr::Targets::Base.new('example.rb', code)

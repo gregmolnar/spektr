@@ -88,7 +88,11 @@ module Spektr
           end
         end
       when :local_variable_read_node
-        return user_input?(@target.lvars.find{|n| n.name == node.name })
+        variable = @target.lvars.find do |n|
+          n.name == node.name
+        end
+        return if variable && variable.location.start_line == node.location.start_line
+        return user_input?(variable)
       when :local_variable_or_write_node
         return user_input?(node.value)
       when :and_node, :or_node
