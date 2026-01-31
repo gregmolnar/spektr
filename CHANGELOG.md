@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.5.3
+
+* parser fixes
+
 ## 0.5.2
 
 * handle nil nodes
