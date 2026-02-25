@@ -19,7 +19,9 @@ module Spektr
 
         ].each do |m|
           @target.find_calls(m).each do |call|
-            check_argument(call.arguments&.arguments&.first, m, call)
+            arguments = call.arguments&.arguments&.first
+            next if arguments && arguments.type == :keyword_hash_node
+            check_argument(arguments, m, call)
           end
         end
         [:calculate].each do |m|

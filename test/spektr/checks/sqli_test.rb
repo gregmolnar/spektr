@@ -50,6 +50,7 @@ class SqliTest < Minitest::Test
           Post.update_all(params[:q])
           term = params[:term]
           Product.find_by_sql("SELECT * FROM products WHERE title LIKE '%\#{term}%'")
+          Post.where(foo: params[:bar])
         end
       end
     CODE
