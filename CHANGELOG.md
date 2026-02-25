@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.5.4
+
+* more parser fixes
+
+
 ## 0.5.3
 
 * parser fixes
