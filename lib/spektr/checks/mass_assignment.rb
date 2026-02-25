@@ -23,13 +23,20 @@ module Spektr
           argument = call.arguments&.arguments&.first
           next if argument.nil?
           ::Spektr.logger.debug "Mass assignment check at #{call.location.start_line}"
-          if user_input?(argument)
-            # we check for permit! separately
-            next if argument.respond_to?(:name) && argument.name == :permit!
-            # check for permit with arguments
-            next if argument.respond_to?(:name) && argument.name == :permit && argument.arguments
-            warn! @target, self, call.location, "Mass assignment"
+          next unless user_input?(argument)
+          if argument.type == :local_variable_read_node
+            variable = @target.lvars.find do |n|
+              n.name == argument.name
+            end
+            param = variable.value
+          else
+            param = argument
           end
+          # we check for permit! separately
+          next if param.respond_to?(:name) && param.name == :permit!
+          # check for permit with arguments
+          next if param.respond_to?(:name) && param.name == :permit && param.arguments
+          warn! @target, self, call.location, "Mass assignment"
         end
         @target.find_calls(:permit!).each do |call|
           unless call.arguments
