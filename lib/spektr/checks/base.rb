@@ -106,10 +106,10 @@ module Spektr
         node.body.body.each do |item|
           return user_input? item
         end
-      when :string_node, :symbol_node, :constant_read_node, :integer_node, :true_node, :constant_path_node, :nil_node, :true_node, :false_node, :self_node, :global_variable_read_node, :and_node
+      when :string_node, :symbol_node, :constant_read_node, :integer_node, :constant_path_node, :nil_node, :true_node, :false_node, :self_node, :global_variable_read_node
         # do nothing
       else
-        Spektr::Logger.debug "Unknown argument type #{node.type.inspect} #{node.inspect}"
+        ::Spektr.logger.debug "Unknown argument type #{node.type.inspect} #{node.inspect}"
       end
       false
     end
@@ -199,7 +199,7 @@ module Spektr
       when :string_node, :symbol_node, :integer_node, :constant_path_node, :nil_node, :true_node, :false_node, :self_node, :global_variable_read_node
         # do nothing
       else
-        Spektr::Logger.debug "Unknown argument type #{node.type}"
+        Spektr.logger.debug "Unknown argument type #{node.type}"
       end
     end
 
