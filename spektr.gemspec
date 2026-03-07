@@ -28,7 +28,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'erubi'
-  spec.add_dependency 'herb'
   spec.add_dependency 'haml'
   spec.add_dependency 'pastel'
   spec.add_dependency 'prism'

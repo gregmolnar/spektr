@@ -3,7 +3,6 @@
 require 'bundler'
 require 'prism'
 require 'erb'
-require 'herb'
 require 'haml'
 require 'logger'
 require 'tty/spinner'
