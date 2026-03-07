@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.5.6
+
+* fix nil handling positives
+* remove herb from dependencies
+
 ## 0.5.5
 
 * fix false positives
