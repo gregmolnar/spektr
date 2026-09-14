@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* Add support for ignoring findings from specific checks with a `# spektr:ignore CHECK_NAME` source comment
+* Add File.binread to check
+
 ## 0.5.6
 
 * fix nil handling positives

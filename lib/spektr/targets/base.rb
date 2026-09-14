@@ -1,10 +1,13 @@
 module Spektr
   module Targets
     class Base < Prism::Visitor
+      IGNORE_DIRECTIVE = /^\s*#\s*spektr:ignore\s+(.+)$/i
+
       attr_accessor :path, :name, :options, :ast, :parent, :parent_modules, :methods, :calls, :interpolated_xstrings, :lvars
 
       def initialize(path, content)
         Spektr.logger.debug "loading #{path}"
+        @source_lines = content.lines
         @ast = Prism.parse(content)
         @path = path
         return unless @ast
@@ -18,6 +21,16 @@ module Spektr
         @ast.value.accept(self)
         @name = @path.split('/').last if @name&.blank?
         @name = @name.prepend("#{@parent_modules.map(&:name).join('::')}::") if @name && @parent_modules.any?
+      end
+
+      def ignored_at?(line_number, check)
+        return false unless line_number && line_number > 1
+
+        directive = @source_lines[line_number - 2]&.match(IGNORE_DIRECTIVE)
+        return false unless directive
+
+        ignored_checks = directive[1].split(/\s+--\s+/, 2).first.split(',').map(&:strip)
+        ignored_checks.include?(check.name)
       end
 
       def method_definitions

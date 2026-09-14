@@ -36,8 +36,21 @@ spektr path/to/app
 
 To see the available options, you can run `spektr --help`.
 
-To ignore a finding, you can use the `--ignore` flag with a comma separated list of fingerprints from the report.
+To ignore findings from the command line, use the `--ignore` flag with a comma-separated list of fingerprints from the report.
 
+Findings can also be ignored in source code by placing `# spektr:ignore`, followed by one or more comma-separated check names, on the line immediately above them:
+
+Use the check names shown in the report:
+
+```ruby
+# spektr:ignore Arbitrary code execution -- input is validated before this method is called
+eval(params[:code])
+
+# spektr:ignore Arbitrary code execution, Dangerous send -- both uses are safe
+eval(send(params[:method]))
+```
+
+The directive only applies to the named checks on the next line; a directive without a check name has no effect. Keeping a reason after `--` is recommended.
 
 ### Railsgoat Example output
 
