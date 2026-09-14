@@ -16,7 +16,7 @@ module Spektr
       def run
         return unless super
         targets = ["Dir", "File", "IO", "Kernel", "Net::FTP", "Net::HTTP", "PStore", "Pathname", "Shell"]
-        methods = [:[], :chdir, :chroot, :delete, :entries, :foreach, :glob, :install, :lchmod, :lchown, :link, :load, :load_file, :makedirs, :move, :new, :open, :read, :readlines, :rename, :rmdir, :safe_unlink, :symlink, :syscopy, :sysopen, :truncate, :unlink]
+        methods = [:[], :binread, :chdir, :chroot, :delete, :entries, :foreach, :glob, :install, :lchmod, :lchown, :link, :load, :load_file, :makedirs, :move, :new, :open, :read, :readlines, :rename, :rmdir, :safe_unlink, :symlink, :syscopy, :sysopen, :truncate, :unlink]
         targets.each do |target|
           methods.each do |method|
             check_calls_for_user_input(@target.find_calls(method, target.to_sym))

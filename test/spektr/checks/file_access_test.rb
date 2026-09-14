@@ -6,6 +6,7 @@ class FileAccessTest < Minitest::Test
       class ApplicationController
         def index
           File.open(params[:directory])
+          File.binread(params[:directory])
         end
       end
     CODE
@@ -16,6 +17,6 @@ class FileAccessTest < Minitest::Test
 
   def test_it_fails_with_user_supplied_value
     @check.run
-    assert_equal 1, @app.warnings.size
+    assert_equal 2, @app.warnings.size
   end
 end
