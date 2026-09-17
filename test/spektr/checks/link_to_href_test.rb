@@ -54,6 +54,18 @@ class LinkToHrefTest < Minitest::Test
     check.run
   end
 
+  def test_it_does_not_crash_with_double_splat_hash_argument
+    code = <<-CODE
+      <%= link_to notification_path_for(recipient: recipient, **nav_params), data: data do %>
+        Hello
+      <% end %>
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::LinkToHref])
+    view = Spektr::Targets::View.new("index.html.erb", code)
+    check = Spektr::Checks::LinkToHref.new(app, view)
+    check.run
+  end
+
   def test_it_does_not_fail_with_url_helpers
     code = <<-CODE
       <%= link_to school.activities.count, school_activities_path(params[:id]) %>

@@ -65,7 +65,7 @@ module Spektr
         end
       when :keyword_hash_node, :hash_node
         node.elements.each do |element|
-          return true if user_input?(element.key)
+          return true if element.respond_to?(:key) && user_input?(element.key)
           return true if user_input?(element.value)
         end
       when :array_node
@@ -139,7 +139,7 @@ module Spektr
         end
       when :keyword_hash_node, :hash_node
         node.elements.each do |element|
-          return true if model_attribute?(element.key)
+          return true if element.respond_to?(:key) && model_attribute?(element.key)
           return true if model_attribute?(element.value)
         end
       when :array_node
