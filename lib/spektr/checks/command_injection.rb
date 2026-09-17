@@ -34,11 +34,7 @@ module Spektr
         # TODO: might need to exclude tempfile and ActiveStorage::Filename
         return if calls.empty?
         calls.each do |call|
-          if call.arguments.is_a?(Prism::ArgumentsNode)
-            argument = call.arguments.arguments.first
-          else
-            argument = call.arguments.first
-          end
+          argument = call.arguments.arguments.first if call.arguments.is_a?(Prism::ArgumentsNode)
           next unless argument
           if user_input?(argument) || model_attribute?(argument)
             warn! @target, self, call.location, "Command injection in #{call.name}"
