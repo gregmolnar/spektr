@@ -95,6 +95,22 @@ class EvaluationTest < Minitest::Test
     assert_empty app.warnings
   end
 
+  def test_it_does_not_crash_on_a_bare_call_with_a_block
+    code = <<-CODE
+      class ApplicationController
+        def index
+          class_eval do
+            def foo; end
+          end
+        end
+      end
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::Evaluation])
+    controller = Spektr::Targets::Controller.new("application_controller.rb", code)
+    Spektr::Checks::Evaluation.new(app, controller).run
+    assert_empty app.warnings
+  end
+
   def test_ignore_comment_requires_at_least_one_check
     code = <<~CODE
       class ApplicationController

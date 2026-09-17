@@ -12,6 +12,8 @@ module Spektr
         return unless super
         [:eval, :instance_eval, :class_eval, :module_eval].each do |name|
           @target.find_calls(name).each do |call|
+            next unless call.arguments
+
             call.arguments.arguments.each do |argument|
               if user_input?(argument)
                 warn! @target, self, call.location, "User input in eval"
