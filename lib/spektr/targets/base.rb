@@ -11,6 +11,7 @@ module Spektr
         @ast = Prism.parse(content)
         @path = path
         return unless @ast
+        @name = ""
         @parent = ""
         @parent_modules = []
         @methods = []
