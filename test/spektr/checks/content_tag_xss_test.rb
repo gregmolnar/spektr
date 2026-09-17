@@ -25,4 +25,17 @@ class ContentTagXssTest < Minitest::Test
     @app.scan!
     assert_equal 1, @app.warnings.size
   end
+
+  def test_it_does_not_crash_with_double_splat_hash_argument
+    code = <<-CODE
+      <%= content_tag("div", id: dom_id(instance, :card), **kwargs) do %>
+        Hello
+      <% end %>
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::ContentTagXss])
+    app.rails_version = Gem::Version.new "7.0.0"
+    view = Spektr::Targets::View.new("index.html.erb", code)
+    check = Spektr::Checks::ContentTagXss.new(app, view)
+    check.run
+  end
 end

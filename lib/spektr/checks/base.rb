@@ -65,7 +65,7 @@ module Spektr
         end
       when :keyword_hash_node, :hash_node
         node.elements.each do |element|
-          return true if user_input?(element.key)
+          return true if element.respond_to?(:key) && user_input?(element.key)
           return true if user_input?(element.value)
         end
       when :array_node
@@ -85,7 +85,7 @@ module Spektr
         actions.each do |action|
           next unless action.body
           action.body.each do |exp|
-            return true if exp.name == node.name && user_input?(exp)
+            return true if exp.respond_to?(:name) && exp.name == node.name && user_input?(exp)
           end
         end
       when :local_variable_read_node
@@ -137,7 +137,7 @@ module Spektr
         end
       when :keyword_hash_node, :hash_node
         node.elements.each do |element|
-          return true if model_attribute?(element.key)
+          return true if element.respond_to?(:key) && model_attribute?(element.key)
           return true if model_attribute?(element.value)
         end
       when :array_node
@@ -176,8 +176,9 @@ module Spektr
             }
           end
           actions.each do |action|
+            next unless action.body
             action.body.each do |exp|
-              next unless node.respond_to?(:name)
+              next unless exp.respond_to?(:name) && node.respond_to?(:name)
               return model_attribute?(exp.value) if exp.is_a?(Prism::InstanceVariableWriteNode) && exp.name == node.name
             end
           end

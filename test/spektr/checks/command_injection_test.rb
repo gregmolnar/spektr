@@ -54,6 +54,18 @@ class CommandInjectionTest < Minitest::Test
   end
 
 
+  def test_it_does_not_crash_on_bare_call_with_no_arguments
+    code = <<-CODE
+      link_to_helper(open: open)
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::CommandInjection])
+    model = Spektr::Targets::Model.new("benefits.rb", code)
+    app.models = [model]
+    check = Spektr::Checks::CommandInjection.new(app, model)
+    check.run
+    assert_equal 0, app.warnings.size
+  end
+
   def test_it_does_not_fail_on_db_exec
     code = <<-CODE
       rows = DB.exec(<<~SQL, args)

@@ -36,7 +36,7 @@ module Spektr
             end
             if argument.is_a?(Prism::KeywordHashNode)
               argument.elements.each do |element|
-                if user_input?(element.key)
+                if element.respond_to?(:key) && user_input?(element.key)
                   warn! @target, self, call.location, "Unescaped parameter in content_tag at #{element.key.name}"
                 end
               end

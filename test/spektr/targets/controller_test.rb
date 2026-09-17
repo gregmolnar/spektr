@@ -193,4 +193,19 @@ class ControllerTest < Minitest::Test
     assert_nil @controller.actions.first.body
     refute_nil @controller.actions[2].body
   end
+
+  def test_it_does_not_crash_on_class_less_concern_file
+    code = <<-CODE
+      module RemoteModal
+        extend ActiveSupport::Concern
+
+        included do
+          before_action :allowed_action?
+        end
+      end
+    CODE
+    controller = Spektr::Targets::Controller.new('concerns/remote_modal.rb', code)
+    refute_nil controller.name
+    assert_empty controller.actions
+  end
 end
