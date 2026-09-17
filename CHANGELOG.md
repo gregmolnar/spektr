@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 1.0.1
+
+* various nil handling fixes
+
 ## 1.0.0
 
 * Add support for ignoring findings from specific checks with a `# spektr:ignore CHECK_NAME` source comment
