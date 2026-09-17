@@ -150,6 +150,27 @@ class BaseTest < Minitest::Test
     assert_equal 'Namespace::Model', target.parent
   end
 
+  def test_it_finds_top_level_scoped_parent
+    code = <<-CODE
+      class ApplicationController < ::ApplicationController
+      end
+    CODE
+    target = Spektr::Targets::Base.new('application_controller.rb', code)
+    assert_equal 'ApplicationController', target.name
+    assert_equal 'ApplicationController', target.parent
+  end
+
+  def test_it_does_not_crash_on_nested_top_level_scoped_parent
+    code = <<-CODE
+      module Teachers
+        class ApplicationController < ::ApplicationController
+        end
+      end
+    CODE
+    target = Spektr::Targets::Base.new('teachers/application_controller.rb', code)
+    assert_equal 'Teachers::ApplicationController', target.name
+  end
+
   def test_it_finds_struct_parent
     code = <<-CODE
       class Result < Struct.new(:status_code, :message)

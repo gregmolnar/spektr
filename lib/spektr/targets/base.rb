@@ -89,12 +89,12 @@ module Spektr
           @parent = node.superclass.receiver.name.to_s
         when Prism::ConstantPathNode, Prism::ConstantReadNode
           @parent = node.superclass.name.to_s
-          @parent.prepend("#{node.superclass.parent.name}::") if node.superclass.respond_to?(:parent)
-          if node.superclass.respond_to?(:parent) && node.superclass.parent.respond_to?(:parent)
+          @parent.prepend("#{node.superclass.parent.name}::") if node.superclass.respond_to?(:parent) && node.superclass.parent
+          if node.superclass.respond_to?(:parent) && node.superclass.parent.respond_to?(:parent) && node.superclass.parent&.parent
             @parent.prepend("#{node.superclass.parent.parent.name}::")
           end
         end
-        if node.is_a?(Prism::ClassNode) && node.constant_path && node.constant_path.respond_to?(:parent)
+        if node.is_a?(Prism::ClassNode) && node.constant_path && node.constant_path.respond_to?(:parent) && node.constant_path.parent
           @parent = node.constant_path.parent.name.to_s
         end
         @parent = @parent.prepend("#{@parent_modules.map(&:name).join('::')}::") if @parent_modules.any?
@@ -102,7 +102,7 @@ module Spektr
       end
 
       def visit_module_node(node)
-        @parent_modules << node.constant_path.parent.name if node.constant_path && node.constant_path.respond_to?(:parent)
+        @parent_modules << node.constant_path.parent.name if node.constant_path && node.constant_path.respond_to?(:parent) && node.constant_path.parent
         @parent_modules << node
         super
       end
