@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.0.0
+
 * Add support for ignoring findings from specific checks with a `# spektr:ignore CHECK_NAME` source comment
 * Add File.binread to check
 
