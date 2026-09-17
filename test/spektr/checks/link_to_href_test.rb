@@ -32,6 +32,28 @@ class LinkToHrefTest < Minitest::Test
     assert_equal 2, app.warnings.size
   end
 
+  def test_it_does_not_crash_when_action_body_has_a_conditional
+    controller_code = <<-CODE
+      class PostsController < ApplicationController
+        def show
+          if params[:id]
+            @url = params[:id]
+          end
+        end
+      end
+    CODE
+    controller = Spektr::Targets::Controller.new("posts_controller.rb", controller_code)
+
+    view_code = <<-CODE
+      <%= link_to "Hello", @url %>
+    CODE
+    app = Spektr::App.new(checks: [Spektr::Checks::LinkToHref])
+    app.controllers = [controller]
+    view = Spektr::Targets::View.new("app/views/posts/show.html.erb", view_code)
+    check = Spektr::Checks::LinkToHref.new(app, view)
+    check.run
+  end
+
   def test_it_does_not_fail_with_url_helpers
     code = <<-CODE
       <%= link_to school.activities.count, school_activities_path(params[:id]) %>

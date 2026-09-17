@@ -85,6 +85,8 @@ module Spektr
         actions.each do |action|
           next unless action.body
           action.body.each do |exp|
+            next unless exp.respond_to?(:name)
+
             return true if exp.name == node.name && user_input?(exp)
           end
         end
@@ -176,8 +178,9 @@ module Spektr
             }
           end
           actions.each do |action|
+            next unless action.body
             action.body.each do |exp|
-              next unless node.respond_to?(:name)
+              next unless exp.respond_to?(:name)
               return model_attribute?(exp.value) if exp.is_a?(Prism::InstanceVariableWriteNode) && exp.name == node.name
             end
           end
