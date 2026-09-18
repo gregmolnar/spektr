@@ -36,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tty-color'
   spec.add_dependency 'tty-option'
   spec.add_dependency 'tty-spinner'
-  spec.add_dependency 'tty-table'
+  spec.add_dependency 'tty-table', '>= 0.10'
   spec.add_dependency 'zeitwerk', '>= 2.6'
 
   spec.add_development_dependency 'byebug'
