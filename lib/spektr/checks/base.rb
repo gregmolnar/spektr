@@ -27,7 +27,7 @@ module Spektr
 
     def warn!(target, check, location, message, confidence = :high)
       full_path = target.is_a?(String) ? target : target.path
-      path = full_path.gsub(@app.root, "")
+      path = full_path.delete_prefix(@app.root)
       return if target.respond_to?(:ignored_at?) && target.ignored_at?(location&.start_line, check)
       return if dupe?(path, location, message)
 

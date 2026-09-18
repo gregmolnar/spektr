@@ -21,4 +21,11 @@ class BaseTest < Minitest::Test
       check.model_attribute?(node)
     end
   end
+
+  def test_it_only_strips_the_root_prefix_from_the_reported_path
+    app = Spektr::App.new(checks: [], root: '.')
+    check = Spektr::Checks::Base.new(app, nil)
+    check.warn!('./app/views/posts/index.html.erb', check, nil, 'boom')
+    assert_equal '/app/views/posts/index.html.erb', app.warnings.first.path
+  end
 end
