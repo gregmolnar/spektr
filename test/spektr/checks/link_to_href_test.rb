@@ -66,6 +66,13 @@ class LinkToHrefTest < Minitest::Test
     check.run
   end
 
+  def test_it_does_not_ship_a_debugger_require
+    offenders = Dir[File.expand_path("../../../../lib/**/*.rb", __FILE__)].select do |file|
+      File.read(file) =~ /^\s*require ["'](byebug|debug|pry)["']/
+    end
+    assert_empty offenders, "a debugger require in lib/ breaks every scan"
+  end
+
   def test_it_does_not_fail_with_url_helpers
     code = <<-CODE
       <%= link_to school.activities.count, school_activities_path(params[:id]) %>

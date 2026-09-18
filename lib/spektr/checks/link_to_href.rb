@@ -26,7 +26,6 @@ module Spektr
           next unless call.arguments
           ::Spektr.logger.debug "#{@target.path}  #{call.location.start_line} #{call.arguments.arguments[1].inspect}"
           next unless call.arguments.arguments[1]
-          require 'byebug'
           if call.arguments.arguments[1] && call.arguments.arguments[1].respond_to?(:name)
             name = call.arguments.arguments[1].name
           end
